@@ -82,3 +82,26 @@ This document governs the scientific boundaries, institutional access realities,
 
 * **Embedded SQLite**: Per requirements avoiding external database daemons or Docker, the platform runs on zero-daemon embedded SQLite (`backend/data/prana.db`).
 * **PostGIS Compatibility**: Geodesic Haversine spatial calculations and SQLAlchemy models are 100% schema-compatible with PostgreSQL + PostGIS for cloud scaling.
+
+---
+
+### 8. Opportunity Prioritization Heuristics & Engineering Boundaries (Milestone 4)
+
+* **Composite Scores as Prioritization Heuristics, Not Physical Measurements**:
+  - The multi-criteria **Weighted Priority Score** generated in the Opportunity Explorer is a structured decision-support heuristic designed to guide engineering allocation.
+  - It is **never a scientific measurement** of particulate mass, ambient air quality index, or guaranteed venture success.
+  - Scores must always be presented alongside their underlying 8 criteria breakdown, active weights, and qualitative score rationales.
+
+* **Stage-Gate Lifecycle Governance**:
+  - A candidate opportunity cannot advance to `Evidence reviewed` without a non-empty, verifiable citation linking to statutory literature (e.g. TERI 2025, NEERI 2020) or verified CAAQM telemetry.
+  - **Prototype Existence Does Not Equal Validation**: A candidate project cannot be marked as `Pilot validated` merely because a physical prototype or benchtop rig exists. Progression to `Pilot validated` strictly requires an empirical verification dataset demonstrating counterfactual mass reduction under de-weathered conditions.
+
+* **Engineering Assumptions vs. Operating Realities**:
+  - *Howrah Foundry Retrofit*: Flue gas temperature fluctuations (spiking from 350°C to 800°C) during cupola burndown cycles require active thermal decoupling. Space constraints inside century-old Howrah foundry sheds may prevent standard baghouse installation without structural redesign.
+  - *Industrial Fence-Line Network*: Optical particle counters experience severe hygroscopic growth drift when relative humidity exceeds 80% during Kolkata winter mornings. Dynamic heated inlet de-humidification must be balanced against solar-battery power budgets.
+  - *Landfill Refuse Fire Suppression*: Subsurface anaerobic decomposition produces aggressive corrosive atmospheres ($H_2S$, volatile organic acids, leachate aerosols) that attack optical sensors and pneumatic probes.
+  - *River Ferry Aftertreatment*: Exhaust backpressure on aging marine mechanical diesel engines must remain within strict manufacturer limits to avoid voiding inland maritime safety certifications.
+
+* **Non-Guarantee of Intellectual Property (IP) Novelty**:
+  - IP opportunities identified in candidate dossiers represent exploratory technical pathways (e.g., small-footprint artisanal cupola thermal decouplers, low-temp electrically assisted marine DPF cassettes).
+  - They **do not constitute legal patentability claims** without exhaustive formal prior-art searches and patent attorney freedom-to-operate analyses.

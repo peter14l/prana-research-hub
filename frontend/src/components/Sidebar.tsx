@@ -11,6 +11,7 @@ import {
   BookOpen,
   FlaskConical,
   Microscope,
+  Target,
   ShieldCheck,
   Settings,
   Wind
@@ -26,6 +27,7 @@ export type NavSection =
   | 'library'
   | 'interventions'
   | 'workspace'
+  | 'opportunities'
   | 'data_quality'
   | 'settings';
 
@@ -44,6 +46,7 @@ const NAV_ITEMS: { id: NavSection; label: string; icon: React.ComponentType<{ cl
   { id: 'library', label: 'Research Library', icon: BookOpen },
   { id: 'interventions', label: 'Intervention Lab', icon: FlaskConical },
   { id: 'workspace', label: 'Analysis Workspace', icon: Microscope },
+  { id: 'opportunities', label: 'Opportunity Explorer', icon: Target },
   { id: 'data_quality', label: 'Data Sources & Quality', icon: ShieldCheck },
   { id: 'settings', label: 'Settings', icon: Settings },
 ];

@@ -105,8 +105,52 @@ class AIAssistantEngine:
                 "> **Scientific Caveat**: Wind direction from the NNW aligns with regional transport from the upper Indo-Gangetic Plain, but wind direction alone does not prove that a specific local upwind facility caused a downwind spike."
             )
 
-        # Topic 5: Interventions / Engineering Solutions / What can PRANA do?
-        if any(w in q for w in ["interven", "solution", "project", "reduce", "prana", "action", "pilot"]):
+        # Topic 5: Opportunities & Candidate Engineering Analysis (Milestone 4)
+        if any(w in q for w in ["opportunity", "candidate", "rank", "compare", "foundry", "fence-line", "ferry", "landfill", "dhapa", "shortlist", "gap", "priorit"]):
+            citations.append({
+                "source": "PRANA Opportunity Evaluation Engine [Milestone 4]",
+                "authority": "PRANA Engineering Analysis",
+                "url": "file:///D:/project-prana/backend/services/opportunity_engine.py"
+            })
+            citations.append({
+                "source": "CSIR-NEERI (2020) Twin Cities Final Report [Table 6.14, p. 148]",
+                "authority": "WBPCB / CSIR-NEERI",
+                "url": "https://www.wbpcb.gov.in/writereaddata/files/SA_Kol-How_Final%20Report.pdf"
+            })
+            citations.append({
+                "source": "TERI (2025) Kolkata Source Apportionment Study [Table 4.5 & 4.6]",
+                "authority": "WBPCB / TERI",
+                "url": "https://www.wbpcb.gov.in/files/We-07-2025-07-48-01SA_EI_CC_Kolkata_WBPCB_2025.pdf"
+            })
+
+            answer_parts.append(
+                "### Evidence-Driven Opportunity Analysis & Prioritization\n\n"
+                "PRANA evaluates 4 candidate engineering opportunities across 8 transparent scientific criteria "
+                "(Pollution Impact, Evidence Strength, Technical Feasibility, Financial Feasibility, Verification, "
+                "Scalability, Innovation, and Partnership Feasibility):\n\n"
+                "1. **Howrah Foundry Cupola Multi-Cyclone & Dry Sorbent Retrofit** (Top Ranked for Mass Reduction):\n"
+                "   - *Why it ranks highest on impact*: Direct source intervention addressing Howrah's primary winter particulate driver (**34% of PM2.5 in Ghusuri**, *CSIR-NEERI 2020 Table 6.14*). Stack isokinetic testing (EPA Method 5/17) enables non-counterfactual verification.\n"
+                "   - *Key Trade-off*: High capital expense (INR 12–18L per unit) and severe spatial footprint constraints inside dense 100-year-old Howrah foundry sheds.\n\n"
+                "2. **Optical & Thermal Fence-Line Plume Attribution Network** (Top Ranked for Feasibility & ROI):\n"
+                "   - *Why it ranks highest on feasibility*: Capital cost is ~1/20th of a CAAQM station (INR 65k vs 1.5Cr). Fills the critical **7 km monitoring void** over the Jalan Industrial Complex (2,000+ unmonitored units).\n"
+                "   - *Role*: Indirect source reduction via regulatory enforcement and nocturnal deterrence.\n\n"
+                "3. **Autonomous Subsurface Thermal Suppression for Landfill Refuse Fires**:\n"
+                "   - *Target*: Dhapa Landfill (East Kolkata, 50 ha) and Belgachia (Howrah). Addresses **14% of winter PM2.5** and episodic toxic dioxin/CO plumes (*TERI 2025 Table 4.6*).\n"
+                "   - *Validation*: Verifiable via Landsat-9/ECOSTRESS thermal infrared satellite bands.\n\n"
+                "4. **Hooghly River Passenger Ferry Exhaust Aftertreatment Retrofit**:\n"
+                "   - *Target*: 50+ municipal passenger ferries with non-road mechanical diesels across 32 river ghats.\n"
+                "   - *Contradictory / Missing Evidence*: Ferry emissions are largely uninventoried in statutory models, but micro-exposure for >100,000 daily commuters at enclosed river jetties is severe."
+            )
+
+            answer_parts.append(
+                "### Resolving Contradictory Evidence & Key Research Questions\n\n"
+                "- **Contradiction**: TERI (2025) identifies *road transport* as the dominant regional source (27%), while NEERI (2020) identifies *industrial cupolas* as dominant in Howrah (34%).\n"
+                "  *Resolution*: This reflects spatial airshed divergence between Kolkata's commercial core (high diesel vehicle traffic) and Howrah's metallurgical fringe. Engineering must be geographically segmented rather than applying a single regional silver bullet.\n"
+                "- **Low-Cost Verification Strategy**: Before deploying field hardware, PRANA should extract public Sentinel-5P NO2 columns and run remote AIS vessel tracking to quantify baseline emissions at zero travel cost."
+            )
+
+        # Topic 6: Interventions / Engineering Solutions / What can PRANA do?
+        elif any(w in q for w in ["interven", "solution", "project", "reduce", "prana", "action", "pilot"]):
             citations.append({
                 "source": "PRANA Intervention Lab Research Hypotheses [Classified as RESEARCH_HYPOTHESIS]",
                 "authority": "PRANA Engineering Analysis",

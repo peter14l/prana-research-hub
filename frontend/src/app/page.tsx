@@ -15,6 +15,7 @@ import WeatherView from '@/components/views/WeatherView';
 import ResearchLibraryView from '@/components/views/ResearchLibraryView';
 import InterventionLabView from '@/components/views/InterventionLabView';
 import AnalysisWorkspaceView from '@/components/views/AnalysisWorkspaceView';
+import OpportunityExplorerView from '@/components/views/OpportunityExplorerView';
 import DataQualityView from '@/components/views/DataQualityView';
 import SettingsView from '@/components/views/SettingsView';
 
@@ -69,6 +70,7 @@ export default function Home() {
     library: 'Statutory Research & Literature Library',
     interventions: 'Intervention Lab & Engineering Hypotheses',
     workspace: 'Environmental Analysis & Research Workspace',
+    opportunities: 'Opportunity Explorer & Engineering Prioritisation',
     data_quality: 'Data Provenance, Quality & Audit Trail',
     settings: 'Platform Configuration & Settings',
   };
@@ -139,6 +141,10 @@ export default function Home() {
 
           {activeSection === 'workspace' && (
             <AnalysisWorkspaceView />
+          )}
+
+          {activeSection === 'opportunities' && (
+            <OpportunityExplorerView />
           )}
 
           {activeSection === 'data_quality' && (

@@ -309,3 +309,111 @@ export async function fetchSavedAnalysis(id: number) {
   if (!res.ok) throw new Error('Failed to fetch saved analysis');
   return res.json();
 }
+
+// ==============================================================================
+// Milestone 4 API Endpoints: Opportunity Discovery & Engineering Prioritisation
+// ==============================================================================
+
+export async function fetchEvidenceInventory() {
+  const res = await fetch(`${API_BASE}/opportunities/inventory`);
+  if (!res.ok) throw new Error('Failed to fetch evidence inventory');
+  return res.json();
+}
+
+export async function fetchSectorEvaluations() {
+  const res = await fetch(`${API_BASE}/opportunities/sectors`);
+  if (!res.ok) throw new Error('Failed to fetch sector evaluations');
+  return res.json();
+}
+
+export async function fetchCandidateOpportunities(sector?: string, minEvidence?: number) {
+  let url = `${API_BASE}/opportunities/candidates`;
+  const params: string[] = [];
+  if (sector && sector !== 'ALL') params.push(`sector=${encodeURIComponent(sector)}`);
+  if (minEvidence) params.push(`min_evidence=${minEvidence}`);
+  if (params.length > 0) url += `?${params.join('&')}`;
+
+  const res = await fetch(url);
+  if (!res.ok) throw new Error('Failed to fetch candidate opportunities');
+  return res.json();
+}
+
+export async function evaluateCandidateOpportunities(payload: {
+  weights?: Record<string, number>;
+  sector_filter?: string;
+  min_evidence_score?: number;
+}) {
+  const res = await fetch(`${API_BASE}/opportunities/evaluate`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  });
+  if (!res.ok) throw new Error('Failed to evaluate candidates');
+  return res.json();
+}
+
+export async function fetchCandidateDossier(idOrSlug: string | number) {
+  const res = await fetch(`${API_BASE}/opportunities/candidates/${idOrSlug}`);
+  if (!res.ok) throw new Error(`Failed to fetch candidate dossier for ${idOrSlug}`);
+  return res.json();
+}
+
+export async function transitionCandidateStage(
+  candidateId: number,
+  targetStage: string,
+  notes?: string,
+  evidenceRef?: string,
+  verificationDatasetRef?: string
+) {
+  const res = await fetch(`${API_BASE}/opportunities/candidates/${candidateId}/stage`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      target_stage: targetStage,
+      notes: notes,
+      supporting_evidence_reference: evidenceRef,
+      verification_dataset_reference: verificationDatasetRef
+    })
+  });
+  if (!res.ok) {
+    const errorBody = await res.json().catch(() => ({}));
+    throw new Error(errorBody.detail || 'Failed to transition candidate stage');
+  }
+  return res.json();
+}
+
+export async function updateCandidateShortlist(
+  candidateId: number,
+  status: string,
+  notes?: string
+) {
+  const res = await fetch(`${API_BASE}/opportunities/candidates/${candidateId}/shortlist`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ status, notes })
+  });
+  if (!res.ok) {
+    const errorBody = await res.json().catch(() => ({}));
+    throw new Error(errorBody.detail || 'Failed to update shortlist status');
+  }
+  return res.json();
+}
+
+export async function fetchResearchGaps(severity?: string, sector?: string) {
+  let url = `${API_BASE}/opportunities/gaps`;
+  const params: string[] = [];
+  if (severity && severity !== 'ALL') params.push(`severity=${encodeURIComponent(severity)}`);
+  if (sector && sector !== 'ALL') params.push(`sector=${encodeURIComponent(sector)}`);
+  if (params.length > 0) url += `?${params.join('&')}`;
+
+  const res = await fetch(url);
+  if (!res.ok) throw new Error('Failed to fetch research gaps');
+  return res.json();
+}
+
+export async function fetchResearchGapAudit() {
+  const res = await fetch(`${API_BASE}/opportunities/gaps/audit`);
+  if (!res.ok) throw new Error('Failed to fetch research gap audit');
+  return res.json();
+}
+

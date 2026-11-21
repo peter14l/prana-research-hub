@@ -343,3 +343,67 @@ class SavedAnalysis(Base):
     source_references = Column(Text, nullable=True)
     analysis_results = Column(JSON, nullable=True) # Summary stats, correlations, linear regression slopes
     created_at = Column(DateTime, default=datetime.utcnow)
+
+class CandidateOpportunity(Base):
+    __tablename__ = "candidate_opportunities"
+
+    id = Column(Integer, primary_key=True, index=True)
+    slug = Column(String(100), unique=True, index=True, nullable=False)
+    title = Column(String(255), nullable=False)
+    sector = Column(String(100), nullable=False) # Road transport, Industrial emissions, Construction and road dust, Waste burning, River transport, etc.
+    target_pollutant = Column(String(100), nullable=False) # e.g. "PM2.5, Heavy Metals (Pb, Fe), SO2"
+    suspected_source = Column(String(200), nullable=False)
+    problem_statement = Column(Text, nullable=False)
+    supporting_evidence = Column(Text, nullable=False)
+    geographic_relevance = Column(String(200), nullable=False)
+    proposed_mechanism = Column(Text, nullable=False)
+    potential_users = Column(String(255), nullable=False)
+    required_technology = Column(Text, nullable=False)
+    development_complexity = Column(String(50), default="Medium") # Low, Medium, High, Very High
+    potential_partners = Column(String(255), nullable=False)
+    verification_method = Column(Text, nullable=False)
+    unresolved_questions = Column(Text, nullable=False)
+    key_risks = Column(Text, nullable=False)
+    ip_opportunity = Column(Text, nullable=False)
+
+    # 8 Evaluation Criteria (Each scored 1.0 - 10.0)
+    pollution_impact_score = Column(Float, nullable=False, default=7.0)
+    evidence_strength_score = Column(Float, nullable=False, default=7.0)
+    technical_feasibility_score = Column(Float, nullable=False, default=7.0)
+    financial_feasibility_score = Column(Float, nullable=False, default=7.0)
+    verification_score = Column(Float, nullable=False, default=7.0)
+    scalability_score = Column(Float, nullable=False, default=7.0)
+    innovation_score = Column(Float, nullable=False, default=7.0)
+    partnership_feasibility_score = Column(Float, nullable=False, default=7.0)
+
+    score_explanations = Column(JSON, nullable=True) # Criterion-level detailed rationales
+
+    # Stage-Gate Lifecycle
+    stage_status = Column(String(50), default="Discovered")
+    # Discovered -> Under research -> Evidence reviewed -> Feasibility assessed -> Prototype proposed -> Prototype developed -> Pilot ready -> Pilot validated
+    stage_history = Column(JSON, default=list) # List of transition objects with notes and evidence
+
+    # Shortlisting Workflow
+    shortlist_status = Column(String(50), default="CONSIDERING") # CONSIDERING, SHORTLISTED, REJECTED, FURTHER_INVESTIGATION
+    shortlist_notes = Column(Text, nullable=True)
+    data_classification = Column(String(50), default="RESEARCH_OPPORTUNITY")
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+class ResearchGap(Base):
+    __tablename__ = "research_gaps"
+
+    id = Column(Integer, primary_key=True, index=True)
+    gap_code = Column(String(50), unique=True, index=True, nullable=False)
+    title = Column(String(255), nullable=False)
+    sector = Column(String(100), nullable=False)
+    gap_type = Column(String(50), nullable=False) # GEOGRAPHIC_VOID, UNINVENTORIED_SOURCE, SEASONAL_DATA_LACK, SPECIATION_ABSENCE, INTERVENTION_UNCERTAINTY
+    severity = Column(String(30), default="HIGH") # CRITICAL, HIGH, MEDIUM, LOW
+    description = Column(Text, nullable=False)
+    affected_areas = Column(String(255), nullable=False)
+    cheapest_resolution_method = Column(Text, nullable=False)
+    remote_testing_possible = Column(Boolean, default=True)
+    estimated_resolution_time = Column(String(50), default="2-4 weeks")
+    status = Column(String(30), default="OPEN") # OPEN, INVESTIGATING, RESOLVED
+    created_at = Column(DateTime, default=datetime.utcnow)
+

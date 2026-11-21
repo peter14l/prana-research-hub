@@ -290,3 +290,97 @@ class IngestionStatusOut(BaseModel):
     records_processed_total: int = 0
     latest_observation_timestamp: Optional[str] = None
 
+# ==============================================================================
+# Milestone 4 Schemas: Opportunity Discovery & Engineering Prioritisation
+# ==============================================================================
+
+class EvaluationWeights(BaseModel):
+    pollution_impact: float = Field(0.20, ge=0.0, le=1.0)
+    evidence_strength: float = Field(0.15, ge=0.0, le=1.0)
+    technical_feasibility: float = Field(0.15, ge=0.0, le=1.0)
+    financial_feasibility: float = Field(0.10, ge=0.0, le=1.0)
+    verification: float = Field(0.15, ge=0.0, le=1.0)
+    scalability: float = Field(0.10, ge=0.0, le=1.0)
+    innovation: float = Field(0.05, ge=0.0, le=1.0)
+    partnership_feasibility: float = Field(0.10, ge=0.0, le=1.0)
+
+class OpportunityEvaluationRequest(BaseModel):
+    weights: Optional[EvaluationWeights] = None
+    sector_filter: Optional[str] = None
+    min_evidence_score: Optional[float] = None
+
+class CandidateOpportunityOut(BaseModel):
+    id: int
+    slug: str
+    title: str
+    sector: str
+    target_pollutant: str
+    suspected_source: str
+    problem_statement: str
+    supporting_evidence: str
+    geographic_relevance: str
+    proposed_mechanism: str
+    potential_users: str
+    required_technology: str
+    development_complexity: str
+    potential_partners: str
+    verification_method: str
+    unresolved_questions: str
+    key_risks: str
+    ip_opportunity: str
+    
+    # Raw 8 criterion scores (1-10)
+    pollution_impact_score: float
+    evidence_strength_score: float
+    technical_feasibility_score: float
+    financial_feasibility_score: float
+    verification_score: float
+    scalability_score: float
+    innovation_score: float
+    partnership_feasibility_score: float
+    
+    # Calculated weighted score based on active weights (1-10)
+    weighted_priority_score: Optional[float] = None
+    rank: Optional[int] = None
+    score_explanations: Optional[Dict[str, str]] = None
+    
+    stage_status: str
+    stage_history: Optional[List[Dict[str, Any]]] = []
+    shortlist_status: str
+    shortlist_notes: Optional[str] = None
+    data_classification: str = "RESEARCH_OPPORTUNITY"
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
+
+    class Config:
+        from_attributes = True
+
+class StageGateTransitionRequest(BaseModel):
+    target_stage: str
+    notes: Optional[str] = None
+    supporting_evidence_reference: Optional[str] = None
+    verification_dataset_reference: Optional[str] = None
+
+class ShortlistUpdateRequest(BaseModel):
+    status: str # CONSIDERING, SHORTLISTED, REJECTED, FURTHER_INVESTIGATION
+    notes: Optional[str] = None
+
+class ResearchGapOut(BaseModel):
+    id: int
+    gap_code: str
+    title: str
+    sector: str
+    gap_type: str
+    severity: str
+    description: str
+    affected_areas: str
+    cheapest_resolution_method: str
+    remote_testing_possible: bool
+    estimated_resolution_time: str
+    status: str
+    created_at: Optional[datetime] = None
+
+    class Config:
+        from_attributes = True
+
+
