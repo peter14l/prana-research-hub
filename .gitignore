@@ -30,6 +30,9 @@ ENV/
 # Databases
 backend/data/*.db-journal
 
+# Large Research PDFs
+backend/data/research_docs/*.pdf
+
 # IDEs & System
 .vscode/
 .idea/

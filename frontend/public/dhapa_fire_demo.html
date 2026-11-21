@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PRANA - Dhapa Remote Fire Intelligence (Milestone 7)</title>
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { background-color: #0f172a; color: #f8fafc; font-family: ui-sans-serif, system-ui, -apple-system, sans-serif; }
+    #map { height: 480px; width: 100%; border-radius: 0.75rem; }
+    .card { background-color: #1e293b; border: 1px solid #334155; border-radius: 0.75rem; padding: 1.25rem; }
+    .leaflet-popup-content-wrapper { background-color: #1e293b; color: #f8fafc; border: 1px solid #475569; }
+    .leaflet-popup-tip { background-color: #1e293b; }
+  </style>
+</head>
+<body class="p-6">
+  <div class="max-w-7xl mx-auto space-y-6">
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between pb-4 border-b border-slate-700 gap-4">
+      <div>
+        <div class="flex items-center gap-3">
+          <span class="px-2.5 py-1 text-xs font-semibold uppercase tracking-wider bg-rose-500/20 text-rose-400 border border-rose-500/30 rounded">
+            Milestone 7 Research Prototype
+          </span>
+          <span class="px-2.5 py-1 text-xs font-semibold uppercase tracking-wider bg-amber-500/20 text-amber-300 border border-amber-500/30 rounded">
+            Software-Only Study
+          </span>
+        </div>
+        <h1 class="text-2xl font-bold mt-2 text-white">Dhapa Landfill Remote Fire Intelligence Proof-of-Concept</h1>
+        <p class="text-sm text-slate-400 mt-1">
+          Evaluating NASA FIRMS (VIIRS 375m & MODIS 1km) and Landsat 8/9 thermal observations for municipal landfill fire tracking in Kolkata.
+        </p>
+      </div>
+      <div class="flex items-center gap-3">
+        <a href="/" class="px-4 py-2 text-sm font-medium bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-lg transition">
+          &larr; Back to PRANA Hub
+        </a>
+      </div>
+    </div>
+
+    <!-- Feasibility Banner -->
+    <div class="bg-rose-950/40 border-2 border-rose-600/60 rounded-xl p-5 flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
+      <div class="space-y-1">
+        <div class="flex items-center gap-2">
+          <span class="text-rose-400 font-bold tracking-wide uppercase text-xs flex items-center gap-1">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+            Scientific Feasibility Assessment Verdict
+          </span>
+        </div>
+        <h3 class="text-lg font-semibold text-rose-200">INSUFFICIENT FOR SPACEBORNE EARLY WARNING OR AUTONOMOUS SUPPRESSION</h3>
+        <p class="text-xs text-rose-300/80 max-w-4xl leading-relaxed">
+          Spaceborne satellite thermal observations (NASA FIRMS VIIRS/MODIS, Landsat 8/9) cannot support autonomous fire tracking or suppression due to: 
+          <strong>(1) Subsurface Blindness</strong> (smoldering occurs 2-6m deep with no flaming surface heat); 
+          <strong>(2) Pixel Mismatch</strong> (375m pixel vs 10-50m² fire fissure); 
+          <strong>(3) Overpass Latency</strong> (2 passes/day, 1-3 hr lag); 
+          <strong>(4) Monsoon Blindness</strong> (85-98% cloud cover June-Sept). 
+          Defensible engineering requires <strong>ground-based continuous LWIR radiometric PTZ cameras + subsurface thermocouple probes</strong>.
+        </p>
+      </div>
+      <div class="shrink-0 bg-rose-900/60 border border-rose-500/40 px-4 py-3 rounded-lg text-center">
+        <div class="text-xs text-rose-300 font-medium">Recommended Path</div>
+        <div class="text-sm font-bold text-white mt-0.5">Ground-Based LWIR PTZ</div>
+      </div>
+    </div>
+
+    <!-- Key Metrics Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="card">
+        <div class="text-xs text-slate-400 font-medium">Dhapa Core Landfill AOI</div>
+        <div class="text-2xl font-bold text-white mt-1">58.4 ha</div>
+        <div class="text-xs text-slate-400 mt-1">Centroid: 22.5453°N, 88.4257°E</div>
+        <div class="text-xs text-amber-400/90 mt-0.5 font-mono">Boundary Uncertainty: &plusmn;75 m</div>
+      </div>
+      <div class="card">
+        <div class="text-xs text-slate-400 font-medium">Nearest Ground CAAQM Monitor</div>
+        <div class="text-2xl font-bold text-white mt-1">4.25 km</div>
+        <div class="text-xs text-slate-400 mt-1">Bidhannagar (WB006)</div>
+        <div class="text-xs text-rose-400/90 mt-0.5">Zero stations within 4 km of dump</div>
+      </div>
+      <div class="card">
+        <div class="text-xs text-slate-400 font-medium">Core AOI Detections / Density</div>
+        <div class="text-2xl font-bold text-white mt-1">6 detections</div>
+        <div class="text-xs text-slate-400 mt-1">10.27 det / km² (Core Area)</div>
+        <div class="text-xs text-emerald-400/90 mt-0.5">Documented 2021 & 2022 blazes</div>
+      </div>
+      <div class="card">
+        <div class="text-xs text-slate-400 font-medium">Monsoon Satellite Cloud Blindness</div>
+        <div class="text-2xl font-bold text-white mt-1">91.6%</div>
+        <div class="text-xs text-slate-400 mt-1">Average cloud cover Jun-Sep</div>
+        <div class="text-xs text-slate-400 mt-0.5">100% blind periods during rain</div>
+      </div>
+    </div>
+
+    <!-- Map & Hotspot Explorer -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div class="lg:col-span-2 card space-y-3">
+        <div class="flex items-center justify-between">
+          <h2 class="text-base font-semibold text-white flex items-center gap-2">
+            <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/></svg>
+            Dhapa Landfill AOI & Satellite Thermal Observations
+          </h2>
+          <div class="flex items-center gap-2 text-xs">
+            <span class="inline-block w-3 h-3 rounded-full bg-rose-500"></span> Core AOI
+            <span class="inline-block w-3 h-3 rounded-full bg-amber-500 ml-2"></span> 1km Buffer
+            <span class="inline-block w-3 h-3 rounded-full bg-blue-500 ml-2"></span> 2km Buffer
+          </div>
+        </div>
+        <div id="map"></div>
+        <div class="text-xs text-slate-400 flex flex-wrap gap-4 pt-1">
+          <span>&bull; Red dots: Core AOI Fire Detections (VIIRS 375m)</span>
+          <span>&bull; Orange dots: 1 km Buffer Anomalies</span>
+          <span>&bull; Blue markers: Statutory CAAQM Ground Stations</span>
+        </div>
+      </div>
+
+      <!-- Hotspot Recurrence & Ground Correlation -->
+      <div class="card space-y-4">
+        <h2 class="text-base font-semibold text-white flex items-center gap-2">
+          <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+          Spatial Clustering & Hotspot Recurrence
+        </h2>
+        
+        <div class="p-3 bg-slate-800/80 rounded-lg border border-slate-700 text-xs space-y-1.5">
+          <div class="font-semibold text-amber-300">Cluster 1: Northern Active Tipping & Flare Face</div>
+          <div class="text-slate-300">Centroid: 22.5451°N, 88.4255°E</div>
+          <div class="text-slate-400">Radius: ~320 m &bull; 6 Core Detections</div>
+          <div class="text-slate-400">Mechanism: Fresh uncompacted municipal solid waste tipping front, continuous bio-methane off-gassing, spontaneous combustion during dry heatwaves.</div>
+        </div>
+
+        <h3 class="text-sm font-semibold text-white pt-2 border-t border-slate-700">Ground Station Baseline & Dilution</h3>
+        <div class="space-y-2 text-xs">
+          <div class="flex justify-between p-2 bg-slate-800/60 rounded">
+            <div>
+              <div class="font-medium text-slate-200">Bidhannagar (WB006)</div>
+              <div class="text-slate-400">4.25 km NW of Dhapa</div>
+            </div>
+            <div class="text-right">
+              <div class="text-rose-400 font-mono font-semibold">PM2.5: ~78.4 µg/m³</div>
+              <div class="text-slate-400 font-mono">Max: 245 µg/m³</div>
+            </div>
+          </div>
+          <div class="flex justify-between p-2 bg-slate-800/60 rounded">
+            <div>
+              <div class="font-medium text-slate-200">Ballygunge (WB004)</div>
+              <div class="text-slate-400">6.58 km WSW of Dhapa</div>
+            </div>
+            <div class="text-right">
+              <div class="text-rose-400 font-mono font-semibold">PM2.5: ~85.2 µg/m³</div>
+              <div class="text-slate-400 font-mono">Max: 260 µg/m³</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="p-3 bg-amber-500/10 border border-amber-500/30 rounded-lg text-xs text-amber-200/90 leading-relaxed">
+          <strong>Causality Warning:</strong> Dilution models prove ground plumes dilute 100x to 1000x across 4.25 km. Winter inversion traps all city sources (traffic, 1000+ Howrah foundries). Station spikes cannot be attributed directly to Dhapa.
+        </div>
+      </div>
+    </div>
+
+    <!-- Analytics Charts -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="card space-y-3">
+        <h2 class="text-base font-semibold text-white">Monthly Thermal Activity & Seasonal Peak</h2>
+        <div class="h-64">
+          <canvas id="monthlyChart"></canvas>
+        </div>
+        <p class="text-xs text-slate-400">
+          Peak anomaly frequency occurs in pre-monsoon dry season (March-May) due to desiccated refuse and intense solar heating, followed by post-monsoon winter flare-ups. Monsoon shows zero detections due to heavy rainfall and cloud cover.
+        </p>
+      </div>
+
+      <div class="card space-y-3">
+        <h2 class="text-base font-semibold text-white">Spatial Anomaly Density: Landfill vs Buffers</h2>
+        <div class="h-64">
+          <canvas id="densityChart"></canvas>
+        </div>
+        <p class="text-xs text-slate-400">
+          While Core AOI displays high density during acute blazes (10.27 det/km²), peripheral buffers register intermittent low-confidence false positives driven by industrial galvanized steel roofs and asphalt roads.
+        </p>
+      </div>
+    </div>
+
+    <!-- Scientific Limitations Table -->
+    <div class="card space-y-4">
+      <h2 class="text-base font-semibold text-white flex items-center gap-2">
+        <svg class="w-4 h-4 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        Definitive Scientific Limitations of Spaceborne Fire Telemetry
+      </h2>
+      <div class="overflow-x-auto">
+        <table class="w-full text-xs text-left border-collapse">
+          <thead>
+            <tr class="border-b border-slate-700 text-slate-300 font-semibold bg-slate-800/50">
+              <th class="p-3">Limitation Parameter</th>
+              <th class="p-3">Satellite Telemetry (FIRMS/Landsat)</th>
+              <th class="p-3">Landfill Physical Reality</th>
+              <th class="p-3">Operational Impact on Early Warning</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-700/60 text-slate-300">
+            <tr>
+              <td class="p-3 font-medium text-slate-200">Combustion Physics</td>
+              <td class="p-3">Detects high-temperature radiative skin heat (>600 K)</td>
+              <td class="p-3">Deep anaerobic smoldering (2-6 m deep, 40-65°C crust)</td>
+              <td class="p-3 text-rose-400 font-semibold">100% blind to subsurface smoldering fires</td>
+            </tr>
+            <tr>
+              <td class="p-3 font-medium text-slate-200">Spatial Resolution</td>
+              <td class="p-3">VIIRS 375 m pixel (140,625 m²) / MODIS 1 km (1,000,000 m²)</td>
+              <td class="p-3">Nascent flame fissures span 10 to 50 m²</td>
+              <td class="p-3 text-rose-400 font-semibold">Sub-pixel dilution; misses nascent fires (&lt;0.03% pixel)</td>
+            </tr>
+            <tr>
+              <td class="p-3 font-medium text-slate-200">Temporal Frequency</td>
+              <td class="p-3">2 overpasses/day (~01:30 & ~13:30) with 1-3 hr latency</td>
+              <td class="p-3">Waste fires require intervention in &lt;15 mins</td>
+              <td class="p-3 text-rose-400 font-semibold">Critical latency gap; cannot trigger suppression</td>
+            </tr>
+            <tr>
+              <td class="p-3 font-medium text-slate-200">Atmospheric Obscuration</td>
+              <td class="p-3">Thermal infrared cannot penetrate cloud decks</td>
+              <td class="p-3">Monsoon has 85-98% cloud cover over Kolkata</td>
+              <td class="p-3 text-rose-400 font-semibold">Complete optical blindness June to September</td>
+            </tr>
+            <tr>
+              <td class="p-3 font-medium text-slate-200">Urban False Positives</td>
+              <td class="p-3">Mid-infrared reflection from steel roofs & asphalt</td>
+              <td class="p-3">Dense commercial shed corridor along EM Bypass</td>
+              <td class="p-3 text-amber-400 font-semibold">Frequent daytime false alarms in peripheral buffer</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Provenance & Methodology Footnote -->
+    <div class="text-xs text-slate-500 border-t border-slate-800 pt-4 space-y-1">
+      <div>Data Sources: NASA FIRMS Near-Real-Time Active Fire Archive (NOAA-20 VIIRS, NOAA-21 VIIRS, Terra/Aqua MODIS); USGS/NASA Landsat 8/9 Collection 2 Level 2 STAC (Path 138 Row 044/045); CPCB/WBPCB CAAQM Ground Telemetry (prana.db); Open-Meteo Reanalysis.</div>
+      <div>Methodology: Geodesic WGS84 polygon containment, Ray-Casting Point-in-Polygon classification, Haversine spherical geodesic buffering (&plusmn;75 m boundary uncertainty), Gaussian dispersion causality auditing.</div>
+    </div>
+  </div>
+
+  <script>
+    // Initialize Leaflet Map
+    const map = L.map('map').setView([22.5453, 88.4257], 13);
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+      maxZoom: 19,
+      attribution: '&copy; CartoDB &copy; OpenStreetMap'
+    }).addTo(map);
+
+    // Fetch GeoJSON and populate map
+    fetch('/api/dhapa-fire/aoi')
+      .then(res => res.json())
+      .then(data => {
+        L.geoJSON(data, {
+          style: function(feature) {
+            const id = feature.properties.id;
+            if (id === 'DHAPA_CORE_AOI') {
+              return { color: '#ef4444', weight: 2.5, fillColor: '#ef4444', fillOpacity: 0.35, dashArray: '4' };
+            } else if (id === 'DHAPA_1KM_BUFFER') {
+              return { color: '#f59e0b', weight: 1.5, fillColor: '#f59e0b', fillOpacity: 0.12, dashArray: '6' };
+            } else if (id === 'DHAPA_2KM_BUFFER') {
+              return { color: '#3b82f6', weight: 1, fillColor: '#3b82f6', fillOpacity: 0.05, dashArray: '8' };
+            }
+          },
+          onEachFeature: function(feature, layer) {
+            const p = feature.properties;
+            layer.bindPopup(`<strong>${p.name}</strong><br>${p.description || ''}`);
+          }
+        }).addTo(map);
+      })
+      .catch(err => console.error("Error loading AOI GeoJSON:", err));
+
+    // Fetch Detections and plot
+    fetch('/api/dhapa-fire/detections')
+      .then(res => res.json())
+      .then(data => {
+        const dets = data.detections || [];
+        dets.forEach(d => {
+          let color = '#3b82f6';
+          let radius = 6;
+          if (d.zone === 'CORE_AOI') {
+            color = '#ef4444';
+            radius = 9;
+          } else if (d.zone === 'BUFFER_1KM') {
+            color = '#f59e0b';
+            radius = 7;
+          }
+
+          const circle = L.circleMarker([d.latitude, d.longitude], {
+            radius: radius,
+            fillColor: color,
+            color: '#ffffff',
+            weight: 1.5,
+            opacity: 1,
+            fillOpacity: 0.85
+          }).addTo(map);
+
+          circle.bindPopup(`
+            <div style="font-size: 12px; line-height: 1.4;">
+              <strong style="color: ${color};">${d.potential_source}</strong><br>
+              <strong>Date:</strong> ${d.acq_date} ${d.acq_time} UTC<br>
+              <strong>Satellite:</strong> ${d.satellite} (${d.instrument})<br>
+              <strong>Zone:</strong> ${d.zone}<br>
+              <strong>FRP:</strong> ${d.frp_mw} MW | <strong>Temp:</strong> ${d.brightness_kelvin} K<br>
+              <strong>Confidence:</strong> ${d.confidence_label} (${d.confidence_percent}%)<br>
+              <strong>Resolution:</strong> ${d.spatial_resolution_m} m<br>
+              <span style="font-size: 10px; color: #94a3b8;">Source: ${d.source_product}</span>
+            </div>
+          `);
+        });
+      });
+
+    // Add Monitoring Stations to Map
+    fetch('/api/dhapa-fire/ground-comparison')
+      .then(res => res.json())
+      .then(data => {
+        const stations = data.nearest_stations || [];
+        stations.forEach(s => {
+          const marker = L.marker([s.coordinates[0], s.coordinates[1]]).addTo(map);
+          marker.bindPopup(`
+            <div style="font-size: 12px; line-height: 1.4;">
+              <strong style="color: #38bdf8;">CAAQM: ${s.name}</strong><br>
+              <strong>Distance to Dhapa:</strong> ${s.distance_to_dhapa_km} km<br>
+              <strong>Avg PM2.5:</strong> ${s.measured_avg_pm25} µg/m³<br>
+              <strong>Max PM2.5:</strong> ${s.measured_max_pm25} µg/m³<br>
+              <strong>Avg CO:</strong> ${s.measured_avg_co} mg/m³
+            </div>
+          `);
+        });
+      });
+
+    // Initialize Charts
+    // 1. Monthly Chart
+    const ctxMonthly = document.getElementById('monthlyChart').getContext('2d');
+    new Chart(ctxMonthly, {
+      type: 'bar',
+      data: {
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+        datasets: [
+          {
+            label: 'Dhapa Core AOI Fires',
+            data: [0, 0, 3, 2, 0, 0, 0, 0, 0, 0, 0, 1],
+            backgroundColor: '#ef4444'
+          },
+          {
+            label: 'Peri-Landfill Buffer (1-2 km)',
+            data: [1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0],
+            backgroundColor: '#f59e0b'
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          x: { stacked: true, grid: { color: '#334155' }, ticks: { color: '#94a3b8' } },
+          y: { stacked: true, grid: { color: '#334155' }, ticks: { color: '#94a3b8', stepSize: 1 } }
+        },
+        plugins: {
+          legend: { labels: { color: '#e2e8f0', font: { size: 11 } } }
+        }
+      }
+    });
+
+    // 2. Spatial Density Chart
+    const ctxDensity = document.getElementById('densityChart').getContext('2d');
+    new Chart(ctxDensity, {
+      type: 'bar',
+      data: {
+        labels: ['Dhapa Core AOI (0.58 km²)', '1 km Buffer (2.56 km²)', '2 km Buffer (9.43 km²)', 'Greater Kolkata (1600 km²)'],
+        datasets: [{
+          label: 'Thermal Anomaly Density (Detections / km²)',
+          data: [10.27, 0.39, 0.11, 0.04],
+          backgroundColor: ['#ef4444', '#f59e0b', '#3b82f6', '#64748b']
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          x: { grid: { color: '#334155' }, ticks: { color: '#94a3b8' } },
+          y: { grid: { color: '#334155' }, ticks: { color: '#94a3b8' } }
+        },
+        plugins: {
+          legend: { display: false }
+        }
+      }
+    });
+  </script>
+</body>
+</html>
