@@ -54,6 +54,7 @@ app.include_router(ingestion.router, prefix=settings.API_V1_PREFIX)
 app.include_router(analysis.router, prefix=settings.API_V1_PREFIX)
 
 @app.get("/")
+@app.get("/health")
 def health_check():
     return {
         "status": "ONLINE",
