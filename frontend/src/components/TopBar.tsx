@@ -1,14 +1,16 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Search,
   Sparkles,
   Download,
   Calendar,
   MapPin,
-  RefreshCw,
-  Clock
+  Clock,
+  ShieldAlert,
+  ShieldCheck,
+  Info
 } from 'lucide-react';
 
 interface TopBarProps {
@@ -21,7 +23,7 @@ interface TopBarProps {
   onOpenAssistant: () => void;
   onExportReport: () => void;
   lastUpdate?: string;
-  isRefreshing?: boolean;
+  dataIntegrity?: any;
   activeViewTitle: string;
 }
 
@@ -35,9 +37,16 @@ export default function TopBar({
   onOpenAssistant,
   onExportReport,
   lastUpdate = 'Just now',
-  isRefreshing = false,
+  dataIntegrity,
   activeViewTitle,
 }: TopBarProps) {
+  const [showIntegrityPopover, setShowIntegrityPopover] = useState(false);
+
+  const counts = dataIntegrity?.counts || { VERIFIED: 0, IMPORTED: 0, DEMO: 10565 };
+  const verifiedPct = dataIntegrity?.verified_pct ?? 0.0;
+  const demoPct = dataIntegrity?.demo_pct ?? 100.0;
+  const importedPct = dataIntegrity?.imported_pct ?? 0.0;
+
   return (
     <header className="h-16 bg-[#0E1219]/90 backdrop-blur-md border-b border-border px-6 flex items-center justify-between sticky top-0 z-20">
       {/* Active view breadcrumb & Region selector */}
@@ -79,24 +88,69 @@ export default function TopBar({
       {/* Global Search and Actions */}
       <div className="flex items-center space-x-3.5">
         {/* Global Search Input */}
-        <div className="relative w-64">
+        <div className="relative w-56">
           <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
           <input
             type="text"
-            placeholder="Search stations, papers, sources..."
+            placeholder="Search stations, papers..."
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
             className="w-full bg-[#141822] border border-border rounded-lg pl-9 pr-3 py-1.5 text-xs text-gray-200 placeholder-gray-500 focus:outline-none focus:border-prana-yellow/50 transition-colors"
           />
         </div>
 
-        {/* Live sync badge */}
-        <div className="flex items-center space-x-1.5 text-[11px] text-gray-400 bg-surface-300 border border-border px-2.5 py-1.5 rounded-lg">
-          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-          <span className="font-medium text-gray-300">WBPCB Feed</span>
-          <span className="text-gray-500">|</span>
-          <Clock className="w-3 h-3 text-gray-500" />
-          <span>{lastUpdate}</span>
+        {/* Global Data Integrity Indicator Pill */}
+        <div className="relative">
+          <button
+            onClick={() => setShowIntegrityPopover(!showIntegrityPopover)}
+            className="flex items-center space-x-1.5 text-[11px] bg-surface-300 hover:bg-[#1A2230] border border-border px-2.5 py-1.5 rounded-lg transition-colors cursor-pointer"
+            title="Click to view dataset classification audit"
+          >
+            {verifiedPct > 0 ? (
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+            ) : (
+              <span className="w-2 h-2 rounded-full bg-amber-400"></span>
+            )}
+            <span className="font-medium text-gray-200">
+              Integrity: <span className="text-prana-yellow font-bold">{verifiedPct > 0 ? `${verifiedPct}% Verified` : 'DEMO Data'}</span>
+            </span>
+          </button>
+
+          {/* Popover */}
+          {showIntegrityPopover && (
+            <div className="absolute right-0 top-10 w-72 bg-[#12161F] border border-border rounded-xl p-3.5 shadow-2xl z-50 text-xs space-y-2 animate-fade-in">
+              <div className="font-bold text-gray-100 flex items-center justify-between border-b border-white/10 pb-1.5">
+                <span>Data Classification Breakdown</span>
+                <span className="text-[10px] text-prana-sage uppercase">Milestone 2</span>
+              </div>
+              <div className="space-y-1.5 text-[11px]">
+                <div className="flex justify-between items-center">
+                  <span className="flex items-center gap-1.5 text-emerald-400">
+                    <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+                    Verified (Statutory CAAQM):
+                  </span>
+                  <span className="font-mono font-bold text-white">{counts.VERIFIED ?? 0} ({verifiedPct}%)</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="flex items-center gap-1.5 text-blue-400">
+                    <span className="w-2 h-2 rounded-full bg-blue-500"></span>
+                    Imported (Researcher CSV):
+                  </span>
+                  <span className="font-mono font-bold text-white">{counts.IMPORTED ?? 0} ({importedPct}%)</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="flex items-center gap-1.5 text-amber-400">
+                    <span className="w-2 h-2 rounded-full bg-amber-500"></span>
+                    Demonstration (Synthetic):
+                  </span>
+                  <span className="font-mono font-bold text-white">{counts.DEMO ?? 10565} ({demoPct}%)</span>
+                </div>
+              </div>
+              <div className="text-[10px] text-gray-400 pt-1.5 border-t border-white/5 leading-relaxed">
+                Observations from seed files are classified as DEMO. Uploading statutory CSVs updates counts to IMPORTED.
+              </div>
+            </div>
+          )}
         </div>
 
         {/* AI Assistant button */}

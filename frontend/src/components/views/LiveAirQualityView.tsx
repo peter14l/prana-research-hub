@@ -10,7 +10,9 @@ import {
   AlertTriangle,
   FileSpreadsheet,
   ChevronRight,
-  ShieldCheck
+  ShieldCheck,
+  ShieldAlert,
+  Info
 } from 'lucide-react';
 import {
   LineChart,
@@ -75,7 +77,7 @@ export default function LiveAirQualityView({ stations }: LiveAirQualityViewProps
             Continuous Air Quality Telemetry
           </h1>
           <p className="text-xs text-gray-400">
-            Official CPCB National Air Quality Index (NAQI) with sub-index breakdown and provenance validation.
+            Official CPCB National Air Quality Index (NAQI) with sub-index breakdown and full provenance tracking.
           </p>
         </div>
 
@@ -101,11 +103,19 @@ export default function LiveAirQualityView({ stations }: LiveAirQualityViewProps
           <a
             href="/api/live/download-csv"
             download
-            className="flex items-center space-x-1.5 bg-[#181E29] hover:bg-[#222B3A] border border-border text-xs text-gray-200 px-3 py-2 rounded-lg transition-colors"
+            className="flex items-center space-x-1.5 bg-[#181E29] hover:bg-[#222B3A] border border-border text-xs text-gray-200 px-3 py-2 rounded-lg transition-colors cursor-pointer"
           >
             <Download className="w-3.5 h-3.5 text-prana-yellow" />
-            <span>Download Observations (CSV)</span>
+            <span>Download CSV (With Provenance)</span>
           </a>
+        </div>
+      </div>
+
+      {/* Scientific Transparency Notice */}
+      <div className="p-3.5 rounded-xl bg-[#121620] border border-white/10 text-xs flex items-start gap-3">
+        <Info className="w-4 h-4 text-prana-yellow shrink-0 mt-0.5" />
+        <div className="text-[11px] leading-relaxed text-gray-300">
+          <strong className="text-prana-yellow uppercase">Milestone 2 Provenance Standard:</strong> All 9 monitoring stations are verified statutory CAAQM installations with confirmed CPCB Site IDs. Seeded observations are tagged as <span className="font-mono text-amber-400 font-bold">DEMO</span> (synthetic diurnal baseline model) to prevent deceptive claims of automated live feeds before official authenticated portal connection or verified CSV import.
         </div>
       </div>
 
@@ -127,12 +137,12 @@ export default function LiveAirQualityView({ stations }: LiveAirQualityViewProps
             <table className="w-full text-left text-xs">
               <thead className="bg-[#10141C] text-gray-400 border-b border-border text-[11px]">
                 <tr>
-                  <th className="py-3 px-4 font-medium">Station &amp; Area</th>
+                  <th className="py-3 px-4 font-medium">Station &amp; CPCB ID</th>
                   <th className="py-3 px-3 font-medium">PM2.5</th>
                   <th className="py-3 px-3 font-medium">PM10</th>
                   <th className="py-3 px-3 font-medium">NO2</th>
                   <th className="py-3 px-3 font-medium">Official AQI</th>
-                  <th className="py-3 px-3 font-medium">Status</th>
+                  <th className="py-3 px-3 font-medium">Data Tier</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5">
@@ -142,6 +152,7 @@ export default function LiveAirQualityView({ stations }: LiveAirQualityViewProps
                   const pm25Val = st.latest_pollutants?.['PM2.5']?.value;
                   const pm10Val = st.latest_pollutants?.['PM10']?.value;
                   const no2Val = st.latest_pollutants?.['NO2']?.value;
+                  const classification = st.data_classification || 'DEMO';
 
                   return (
                     <tr
@@ -153,8 +164,10 @@ export default function LiveAirQualityView({ stations }: LiveAirQualityViewProps
                     >
                       <td className="py-3 px-4">
                         <div className="font-semibold text-gray-200">{st.name}</div>
-                        <div className="text-[10px] text-gray-500">
-                          {st.station_code} • {st.city}
+                        <div className="text-[10px] text-gray-400 font-mono flex items-center gap-1.5 mt-0.5">
+                          <span className="text-prana-yellow font-bold">{st.cpcb_site_id || st.station_code}</span>
+                          <span>•</span>
+                          <span>{st.city}</span>
                         </div>
                       </td>
                       <td className="py-3 px-3 font-mono font-medium text-gray-200">
@@ -174,9 +187,14 @@ export default function LiveAirQualityView({ stations }: LiveAirQualityViewProps
                         </span>
                       </td>
                       <td className="py-3 px-3">
-                        <span className="inline-flex items-center gap-1 text-[11px] text-emerald-400">
-                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-                          {st.status_label}
+                        <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-bold border ${
+                          classification === 'VERIFIED'
+                            ? 'bg-emerald-950 text-emerald-400 border-emerald-600'
+                            : classification === 'IMPORTED'
+                            ? 'bg-blue-950 text-blue-400 border-blue-600'
+                            : 'bg-amber-950 text-amber-400 border-amber-600'
+                        }`}>
+                          {classification}
                         </span>
                       </td>
                     </tr>
@@ -195,7 +213,7 @@ export default function LiveAirQualityView({ stations }: LiveAirQualityViewProps
                 <div className="flex items-start justify-between">
                   <div>
                     <span className="text-[10px] uppercase font-semibold text-prana-sage tracking-wider">
-                      Selected Station Metadata
+                      Verified Statutory Station Metadata
                     </span>
                     <h2 className="text-base font-bold text-white mt-0.5">
                       {selectedStation.name}
@@ -205,9 +223,9 @@ export default function LiveAirQualityView({ stations }: LiveAirQualityViewProps
                     </div>
                   </div>
                   <div className="text-right">
-                    <span className="text-[10px] text-gray-500">Coordinates</span>
-                    <div className="text-xs font-mono text-gray-300">
-                      {selectedStation.latitude.toFixed(4)}°N, {selectedStation.longitude.toFixed(4)}°E
+                    <span className="text-[10px] text-gray-500">CPCB Site Identifier</span>
+                    <div className="text-xs font-mono font-bold text-prana-yellow">
+                      {selectedStation.cpcb_site_id || 'site_verified'}
                     </div>
                   </div>
                 </div>
@@ -298,12 +316,16 @@ export default function LiveAirQualityView({ stations }: LiveAirQualityViewProps
               {/* Provenance Footer */}
               <div className="p-3 rounded-lg bg-[#0F131A] border border-border text-[11px] text-gray-400 space-y-1">
                 <div className="flex justify-between">
-                  <span>Data Provider:</span>
-                  <span className="text-gray-200">West Bengal Pollution Control Board</span>
+                  <span>Operating Authority:</span>
+                  <span className="text-gray-200">West Bengal Pollution Control Board (WBPCB)</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>Quality Status:</span>
-                  <span className="text-emerald-400">Validated Ground Telemetry</span>
+                  <span>Station Verification:</span>
+                  <span className="text-emerald-400 font-semibold">CPCB Verified Statutory Site</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Current Data Classification:</span>
+                  <span className="text-amber-400 font-semibold font-mono">{selectedStation.data_classification || 'DEMO'} (Synthetic Baseline)</span>
                 </div>
               </div>
             </>

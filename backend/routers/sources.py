@@ -1,13 +1,13 @@
 """
-Source Intelligence router:
-Evidence-backed source profiles, published studies, and comparison.
+Source Intelligence router (Milestone 2):
+Evidence-backed source profiles, published studies, and verifiable citations.
 """
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 from typing import Dict, Any, List, Optional
 from backend.database import get_db
 from backend.models.models import (
-    SourceCategory, SourceApportionmentStudy, SourceContributionProfile
+    SourceCategory, SourceApportionmentStudy, SourceContributionProfile, ResearchFinding
 )
 from backend.services.source_intelligence_service import EVIDENCE_TYPES
 
@@ -52,6 +52,26 @@ def get_published_studies(db: Session = Depends(get_db)) -> List[Dict[str, Any]]
         for s in studies
     ]
 
+@router.get("/findings")
+def get_verifiable_findings(db: Session = Depends(get_db)) -> List[Dict[str, Any]]:
+    """Returns statutory research findings with page numbers and table citations."""
+    findings = db.query(ResearchFinding).all()
+    return [
+        {
+            "id": f.id,
+            "document_id": f.document_id,
+            "finding_type": f.finding_type,
+            "title": f.title,
+            "statement": f.statement,
+            "citation_reference": f.citation_reference,
+            "page_number": f.page_number,
+            "table_figure_ref": f.table_figure_ref,
+            "has_supporting_reference": bool(f.has_supporting_reference),
+            "confidence": f.confidence
+        }
+        for f in findings
+    ]
+
 @router.get("/profiles")
 def get_contribution_profiles(
     city: str = "Kolkata",
@@ -84,7 +104,11 @@ def get_contribution_profiles(
             "concentration_ugm3": p.SourceContributionProfile.concentration_ugm3,
             "uncertainty_min": p.SourceContributionProfile.uncertainty_min,
             "uncertainty_max": p.SourceContributionProfile.uncertainty_max,
-            "evidence_type": p.SourceContributionProfile.evidence_type
+            "evidence_type": p.SourceContributionProfile.evidence_type,
+            "citation_reference": p.SourceContributionProfile.citation_reference,
+            "page_number": p.SourceContributionProfile.page_number,
+            "table_figure_ref": p.SourceContributionProfile.table_figure_ref,
+            "has_supporting_reference": bool(p.SourceContributionProfile.has_supporting_reference)
         }
         for p in profiles
     ]

@@ -92,6 +92,7 @@ export default function Home() {
           onOpenAssistant={() => setAssistantOpen(true)}
           onExportReport={handleExportReport}
           activeViewTitle={VIEW_TITLES[activeSection]}
+          dataIntegrity={summary?.data_integrity}
         />
 
         {/* Dynamic View Container */}

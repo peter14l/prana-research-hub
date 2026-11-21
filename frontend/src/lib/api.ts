@@ -1,5 +1,5 @@
 /**
- * PRANA Research Hub API Client
+ * PRANA Research Hub API Client (Milestone 2 - Data Provenance Aware)
  */
 
 const API_BASE = '/api';
@@ -80,6 +80,12 @@ export async function fetchPublishedStudies() {
   return res.json();
 }
 
+export async function fetchVerifiableFindings() {
+  const res = await fetch(`${API_BASE}/sources/findings`);
+  if (!res.ok) throw new Error('Failed to fetch findings');
+  return res.json();
+}
+
 export async function fetchSourceProfiles(city = 'Kolkata', season = 'Winter', pollutant = 'PM2.5') {
   const res = await fetch(`${API_BASE}/sources/profiles?city=${city}&season=${season}&pollutant=${pollutant}`);
   if (!res.ok) throw new Error('Failed to fetch source profiles');
@@ -144,16 +150,35 @@ export async function createHypothesis(payload: any) {
   return res.json();
 }
 
-export async function fetchQualityAudit() {
-  const res = await fetch(`${API_BASE}/quality/audit`);
+export async function fetchQualityAudit(hoursWindow = 168) {
+  const res = await fetch(`${API_BASE}/quality/audit?hours_window=${hoursWindow}`);
   if (!res.ok) throw new Error('Failed to fetch quality audit');
   return res.json();
 }
 
-export async function importCSV(file: File, providerCode = 'MANUAL_CSV_IMPORT') {
+export async function fetchIntegritySummary() {
+  const res = await fetch(`${API_BASE}/quality/integrity-summary`);
+  if (!res.ok) throw new Error('Failed to fetch integrity summary');
+  return res.json();
+}
+
+export async function fetchStationVerificationRegistry() {
+  const res = await fetch(`${API_BASE}/quality/stations/verification`);
+  if (!res.ok) throw new Error('Failed to fetch station registry');
+  return res.json();
+}
+
+export async function fetchSourcesReliability() {
+  const res = await fetch(`${API_BASE}/quality/sources/reliability`);
+  if (!res.ok) throw new Error('Failed to fetch sources reliability');
+  return res.json();
+}
+
+export async function importCSV(file: File, providerCode = 'MANUAL_CSV_IMPORT', classification = 'IMPORTED') {
   const formData = new FormData();
   formData.append('file', file);
   formData.append('provider_code', providerCode);
+  formData.append('classification', classification);
 
   const res = await fetch(`${API_BASE}/quality/import-csv`, {
     method: 'POST',

@@ -1,25 +1,50 @@
 # PRANA Research Hub: Kolkata–Howrah Environmental Intelligence
+## Milestone 2: Data Integrity, Provenance & Scientific Verification
 
-**PRANA Research Hub** is a research-grade environmental intelligence and geospatial analysis web platform built for **PRANA**, an early-stage clean-air technology initiative investigating outdoor air pollution across the **Kolkata–Howrah twin cities of West Bengal, India**.
+**PRANA Research Hub** is a research-grade environmental intelligence and geospatial analysis platform engineered for **PRANA**, an early-stage clean-air technology initiative investigating outdoor air pollution across the **Kolkata–Howrah metropolitan airshed of West Bengal, India**.
 
-This platform is engineered to identify scientifically defensible, measurable pollution-reduction opportunities for PRANA's first engineering pilot projects.
+The platform is designed to identify scientifically defensible, measurable pollution-reduction opportunities for PRANA's initial engineering pilot projects.
 
 ---
 
-## Key Questions Answered
+## Scientific Integrity Standards (Milestone 2)
 
-1. **Where are concentrations highest, and how do they change over time?**
-   - Live telemetry across 9 statutory CAAQM stations in Kolkata and Howrah.
-   - Diurnal 24-hour profiles isolating morning commute spikes and nocturnal winter inversion spikes.
-2. **What are the likely contributing emission sources?**
-   - Grounded in official source-apportionment studies: **TERI (2025)** and **CSIR-NEERI (2020)**.
-   - Strict separation between ambient sensor measurements, receptor modeling (PMF/CMB), and bottom-up emissions inventories.
-3. **Which areas, pollutants, and sources deserve further investigation?**
-   - Spatial coverage gap audit identifying unmonitored zones (e.g., Khidirpur Port, South-West Kolkata, rural Howrah).
-   - Hotspot identification with uncertainty estimation (refuses spurious ward-level interpolation).
-4. **Which interventions could realistically reduce pollution, and how can they be measured?**
-   - **Intervention Lab**: Candidate engineering hypotheses (Howrah foundry divided-blast retrofits, Hooghly ferry electrification, BT Road arterial dust suppression).
-   - Counterfactual evaluation framework with control stations and meteorological de-weathering.
+Following the Milestone 2 scientific verification audit, every measurement, station dossier, and research claim adheres to strict provenance standards:
+
+1. **Five-Tier Data Provenance System**:
+   - `VERIFIED`: Authenticated statutory data traceable to an official portal extract or signed source.
+   - `IMPORTED`: Field observations or historical datasets uploaded by researchers.
+   - `DERIVED`: Numerically calculated analytics (e.g., CPCB NAQI sub-indices, rolling averages).
+   - `DEMO`: Demonstration or synthetic baseline models (clearly identified; never disguised as live data).
+   - `UNVERIFIED`: Data whose precise institutional origin cannot currently be established.
+2. **Station Verification Dossier**:
+   - All 9 statutory Continuous Ambient Air Quality Monitoring (CAAQM) stations in Kolkata and Howrah are cross-referenced with Central Pollution Control Board (CPCB) Site IDs (`site_5002` through `site_5010`).
+   - Unmonitored industrial corridors (Jalan, Domjur, Uluberia, Budge Budge) are explicitly documented rather than filled with speculative interpolation heatmaps.
+3. **Statutory Completeness Calculation**:
+   - Completeness is calculated strictly as:
+     $$\text{Completeness (\%)} = \left(\frac{\text{Received Valid Observations}}{\text{Expected Hours} \times \text{Tracked Pollutants}}\right) \times 100$$
+   - Every completeness figure displays its exact numerator and denominator (e.g., `10,521 / 10,584 records (99.4%)`).
+4. **Zero Silent Deletion Policy**:
+   - 3-sigma statistical outliers and physical threshold flags are retained in an inspection queue for scientific review, never deleted silently.
+5. **Traceable Research Claims**:
+   - Source apportionment contributions link directly to official publications: **TERI (2025)** (Tables 4.5 & 4.6, pp. 84–92) and **CSIR-NEERI (2020)** (Table 5.2, p. 112). Findings lacking supporting references trigger explicit visual warnings.
+
+---
+
+## 10 Core Application Modules
+
+| Module | Purpose & Capabilities | Milestone 2 Provenance Features |
+| :--- | :--- | :--- |
+| **1. Overview** | Regional air quality summary, 6 pollutant NAAQS cards, MapLibre telemetry map, 7-day trend envelope, evidence-backed highlights. | Global Data Integrity indicator pill displaying verified vs. demo dataset distribution. |
+| **2. Live Air Quality** | CAAQM station list, CPCB NAQI calculation with sub-indices, 48-hour history, raw vs. validated data inspection, CSV export. | Statutory CPCB Site ID tagging, station verification status, data classification pill per station. |
+| **3. Pollution Explorer** | Diurnal hourly profiles (24h), Day-of-week patterns, bivariate correlation with Pearson/Spearman and non-causal caveat, multi-station comparison. | Transparent flagging of synthetic baseline diurnal models. |
+| **4. Geographic Hotspots** | 9 evaluated zones across Kolkata and Howrah, distance to nearest station, uncertainty classification, explicit coverage gap warnings. | Spatial coverage void alerts for unmonitored foundry and port industrial belts. |
+| **5. Source Intelligence** | Published source apportionment (TERI 2025, NEERI 2020), winter/summer sector shares, chemical marker directory, evidence labels. | Verifiable research findings with exact publication citations, page numbers, and table references. |
+| **6. Weather & Atmosphere** | Hourly temperature, relative humidity, wind speed, wind direction, Planetary Boundary Layer Height (PBLH), 16-sector wind rose. | Synoptic reanalysis telemetry from Open-Meteo High-Resolution models. |
+| **7. Research Library** | Searchable repository of foundational papers (WBPCB, TERI, CPCB, NEERI) with metadata, methodology, findings, and user annotations. | Full methodological metadata and limitation disclosures for every paper. |
+| **8. Intervention Lab** | Candidate engineering hypotheses, multi-criteria quantitative scoring (feasibility, reduction, verification), counterfactual verification design. | Counterfactual evaluation frameworks with control stations and de-weathering requirements. |
+| **9. Data Sources & Quality** | Ingestion audit logs, 3-sigma outlier inspector, completeness rate, manual CSV dataset import with schema validation. | 4 Dedicated Tabs: Integrity & Completeness Audit, Station Verification Dossier, Provider Reliability, Cryptographic CSV Ingestion. |
+| **10. Settings** | Air shed geographic bounding box, CPCB NAQI configuration, database and API status. | Live status of internal SQLite engine, external API credentials, and boundary configs. |
 
 ---
 
@@ -34,26 +59,10 @@ This platform is engineered to identify scientifically defensible, measurable po
 
 ### Backend
 - **Framework**: Python 3.12 FastAPI
-- **Database**: Zero-setup embedded SQLite (`backend/data/prana.db`), fully compatible with PostgreSQL/PostGIS
+- **Database**: Zero-setup embedded SQLite (`backend/data/prana.db`), 100% schema-compatible with PostgreSQL/PostGIS
 - **ORM & Validation**: SQLAlchemy 2.0 & Pydantic
 - **Scientific Computing**: Pandas, NumPy, SciPy, Scikit-learn, Shapely
-
----
-
-## 10 Core Application Modules
-
-| Module | Purpose & Capabilities |
-| :--- | :--- |
-| **1. Overview** | Regional air quality summary, 6 pollutant NAAQS cards, MapLibre telemetry map, 7-day trend envelope, evidence-backed highlights. |
-| **2. Live Air Quality** | CAAQM station list, CPCB NAQI calculation with sub-indices, 48-hour history, raw vs. validated data inspection, CSV export. |
-| **3. Pollution Explorer** | Diurnal hourly profiles (24h), Day-of-week patterns, bivariate correlation with Pearson/Spearman and non-causal caveat, multi-station comparison. |
-| **4. Geographic Hotspots** | 9 evaluated zones across Kolkata and Howrah, distance to nearest station, uncertainty classification, explicit coverage gap warnings. |
-| **5. Source Intelligence** | Published source apportionment (TERI 2025, NEERI 2020), winter/summer sector shares, chemical marker directory, evidence labels. |
-| **6. Weather & Atmosphere** | Hourly temperature, relative humidity, wind speed, wind direction, Planetary Boundary Layer Height (PBLH), 16-sector wind rose. |
-| **7. Research Library** | Searchable repository of foundational papers (WBPCB, TERI, CPCB, NEERI) with metadata, methodology, findings, and user annotations. |
-| **8. Intervention Lab** | Candidate engineering hypotheses, multi-criteria quantitative scoring (feasibility, reduction, verification), counterfactual verification design. |
-| **9. Data Sources & Quality** | Ingestion audit logs, 3-sigma outlier inspector, completeness rate (99.8%), manual CSV dataset import with schema validation. |
-| **10. Settings** | Air shed geographic bounding box, CPCB NAQI configuration, database and API status. |
+- **Security & Integrity**: SHA-256 cryptographic provenance hashing for dataset ingestion
 
 ---
 
@@ -72,8 +81,8 @@ From the project root:
 # Navigate to project root
 cd D:\project-prana
 
-# Seed database with authentic Kolkata-Howrah research dataset (if not already seeded)
-python -m backend.seed.seed_data
+# Execute database migrations (Milestone 2 Schema)
+python backend/migrate_milestone2.py
 
 # Start FastAPI backend server (Runs on port 8000)
 python -m uvicorn backend.main:app --host 127.0.0.1 --port 8000 --reload
@@ -91,11 +100,8 @@ In a separate terminal:
 # Navigate to frontend directory
 cd D:\project-prana\frontend
 
-# Install dependencies (already installed)
-pnpm install
-
 # Start Next.js development server (Runs on port 3000)
-pnpm run dev
+npx next dev -p 3000
 ```
 
 Open your browser at:
@@ -105,45 +111,31 @@ Open your browser at:
 
 ## Automated Verification Suite
 
-Run the full end-to-end Python test suite:
+Run the full end-to-end Python test suites:
 
 ```powershell
-python -m unittest tests/test_suite.py
+# Run all automated tests (Milestone 1 + Milestone 2)
+python -m unittest discover tests
+
+# Or run Milestone 2 specific verification suite:
+python -m unittest tests/test_milestone2.py
 ```
 
 Tests verify:
-- Exact CPCB NAQI breakpoint interpolation and the 3-parameter validity rule.
-- Geodesic spatial distance and coverage gap threshold classification.
-- Bivariate Pearson & Spearman correlation engine with scientific non-causal disclaimer.
-- FastAPI endpoints for all 10 modules.
+1. **Provenance Assignment**: SHA-256 cryptographic fingerprinting, provider tagging, and original source recording.
+2. **Data Classification**: Complete representation across `VERIFIED`, `IMPORTED`, `DERIVED`, `DEMO`, and `UNVERIFIED`.
+3. **Duplicate Detection**: Zero-collision identification of duplicate timestamps per station/pollutant.
+4. **Missing Observation Detection**: Identification of hourly temporal sequence gaps.
+5. **Completeness Formula**: Validation of the explicit numerator/denominator ratio.
+6. **Station Verification Dossier**: Statutory verification of all 9 CAAQM stations with CPCB Site IDs.
+7. **Stale Data Detection**: Dynamic flagging of sensors with no telemetry in >24 hours.
+8. **Research Citation Traceability**: Exact publication, page, and table cross-referencing.
 
 ---
 
-## Production Deployment
+## Audit Reports & Documentation
 
-### Production Build
-```powershell
-# Build frontend
-cd frontend
-pnpm run build
-
-# Start production server
-pnpm run start -p 3000
-```
-
-### Environment Configuration
-Copy `.env.example` to `.env` and set optional variables as desired:
-```ini
-DATABASE_URL=sqlite:///./backend/data/prana.db
-OPENAQ_API_KEY=your_key_here
-GEMINI_API_KEY=your_key_here
-```
-
----
-
-## Scientific Protocols & Limitations
-
-Please read [LIMITATIONS.md](file:///D:/project-prana/LIMITATIONS.md) for full documentation on:
-- Non-attribution boundaries of ambient sensor data.
-- Spatial coverage voids in South-West Kolkata and outer Howrah.
-- Meteorological de-weathering requirements for counterfactual intervention verification.
+- [DATA_INTEGRITY_AUDIT.md](file:///D:/project-prana/DATA_INTEGRITY_AUDIT.md): Forensic audit analyzing seeded observations, data classifications, completeness formulas, and provider connectivity.
+- [STATION_VERIFICATION_REPORT.md](file:///D:/project-prana/STATION_VERIFICATION_REPORT.md): Dossier for all 9 statutory CAAQM stations with CPCB Site IDs, coordinates, verified parameters, and spatial coverage voids.
+- [UNRESOLVED_ISSUES.md](file:///D:/project-prana/UNRESOLVED_ISSUES.md): Institutional API boundaries (OpenAQ auth, WBPCB manual portals), speciation limitations, and PostGIS scaling roadmap.
+- [LIMITATIONS.md](file:///D:/project-prana/LIMITATIONS.md): Scientific protocols, non-attribution boundaries of ambient sensor data, and counterfactual intervention guidelines.

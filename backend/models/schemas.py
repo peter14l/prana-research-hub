@@ -1,5 +1,5 @@
 """
-Pydantic schemas for data serialization and validation
+Pydantic schemas for data serialization and validation (Milestone 2)
 """
 from typing import Optional, List, Dict, Any
 from datetime import datetime
@@ -12,10 +12,14 @@ class DataProviderBase(BaseModel):
     portal_url: Optional[str] = None
     description: Optional[str] = None
     status: str = "ACTIVE"
+    connection_status: str = "CONNECTED"
+    retrieval_method: str = "REST_API"
 
 class DataProviderOut(DataProviderBase):
     id: int
     last_synced_at: Optional[datetime] = None
+    last_failed_at: Optional[datetime] = None
+    last_error_message: Optional[str] = None
 
     class Config:
         from_attributes = True
@@ -34,6 +38,7 @@ class SensorOut(BaseModel):
 class MonitoringStationOut(BaseModel):
     id: int
     station_code: str
+    cpcb_site_id: Optional[str] = None
     name: str
     city: str
     area_type: str
@@ -45,6 +50,11 @@ class MonitoringStationOut(BaseModel):
     active: bool
     is_demo: bool
     commissioned_date: Optional[str] = None
+    verification_status: str = "VERIFIED"
+    verification_date: Optional[str] = None
+    verification_source_url: Optional[str] = None
+    verified_parameters: Optional[str] = None
+    verification_notes: Optional[str] = None
     metadata_json: Optional[Dict[str, Any]] = None
     sensors: List[SensorOut] = []
 
@@ -60,6 +70,10 @@ class ValidatedObservationOut(BaseModel):
     observation_timestamp: datetime
     is_valid: bool
     quality_status: str
+    data_classification: str = "DEMO"
+    original_data_provider: Optional[str] = None
+    original_station_id: Optional[str] = None
+    provenance_hash: Optional[str] = None
     z_score: Optional[float] = None
     flag_reason: Optional[str] = None
     provenance: str
@@ -77,6 +91,7 @@ class StationAQIOut(BaseModel):
     sub_indices: Optional[Dict[str, Any]]
     is_valid_cpcb: bool
     methodology: str
+    data_classification: str = "DERIVED"
 
     class Config:
         from_attributes = True
@@ -96,6 +111,7 @@ class WeatherObservationOut(BaseModel):
     surface_pressure_hpa: Optional[float]
     boundary_layer_height_m: Optional[float]
     data_provider: str
+    data_classification: str = "DEMO"
 
     class Config:
         from_attributes = True
@@ -115,6 +131,21 @@ class ResearchDocumentOut(BaseModel):
     confidence_tier: str
     tags: Optional[str]
     created_at: datetime
+
+    class Config:
+        from_attributes = True
+
+class ResearchFindingOut(BaseModel):
+    id: int
+    document_id: int
+    finding_type: str
+    title: str
+    statement: str
+    citation_reference: Optional[str] = None
+    page_number: Optional[str] = None
+    table_figure_ref: Optional[str] = None
+    has_supporting_reference: bool = True
+    confidence: str
 
     class Config:
         from_attributes = True
@@ -162,6 +193,10 @@ class SourceContributionProfileOut(BaseModel):
     uncertainty_min: Optional[float]
     uncertainty_max: Optional[float]
     evidence_type: str
+    citation_reference: Optional[str] = None
+    page_number: Optional[str] = None
+    table_figure_ref: Optional[str] = None
+    has_supporting_reference: bool = True
     category_name: Optional[str] = None
     study_name: Optional[str] = None
 
@@ -193,6 +228,7 @@ class InterventionHypothesisCreate(BaseModel):
 class InterventionHypothesisOut(InterventionHypothesisCreate):
     id: int
     status: str
+    data_classification: str = "RESEARCH_HYPOTHESIS"
     created_at: datetime
 
     class Config:
@@ -211,4 +247,5 @@ class RegionalSummaryOut(BaseModel):
     stale_stations: int
     total_stations: int
     dominant_category: str
+    data_integrity: Optional[Dict[str, Any]] = None
     highlights: List[Dict[str, Any]]

@@ -1,5 +1,5 @@
 """
-Overview dashboard router
+Overview dashboard router (Milestone 2 - Data Provenance Aware)
 """
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
@@ -9,6 +9,7 @@ from backend.database import get_db
 from backend.models.models import (
     MonitoringStation, ValidatedObservation, StationAQIRecord, WeatherObservation
 )
+from backend.services.data_quality_engine import DataQualityEngine
 
 router = APIRouter(prefix="/overview", tags=["Overview"])
 
@@ -27,7 +28,6 @@ def get_regional_summary(db: Session = Depends(get_db)) -> Dict[str, Any]:
     cutoff_stale = datetime.utcnow() - timedelta(hours=6)
 
     for st in stations:
-        # Check latest observation
         latest_obs = (
             db.query(ValidatedObservation)
             .filter_by(station_id=st.id)
@@ -40,7 +40,6 @@ def get_regional_summary(db: Session = Depends(get_db)) -> Dict[str, Any]:
             else:
                 stale_count += 1
                 
-        # Gather latest for each pollutant
         for pol in latest_readings.keys():
             obs = (
                 db.query(ValidatedObservation)
@@ -59,7 +58,6 @@ def get_regional_summary(db: Session = Depends(get_db)) -> Dict[str, Any]:
     co_avg = round(sum(latest_readings["CO"]) / len(latest_readings["CO"]), 2) if latest_readings["CO"] else 1.25
     o3_avg = round(sum(latest_readings["O3"]) / len(latest_readings["O3"]), 1) if latest_readings["O3"] else 28.4
 
-    # Dominant category based on PM2.5
     if pm25_avg <= 30:
         dominant_cat = "Good"
     elif pm25_avg <= 60:
@@ -73,6 +71,10 @@ def get_regional_summary(db: Session = Depends(get_db)) -> Dict[str, Any]:
     else:
         dominant_cat = "Severe"
 
+    # Milestone 2: Integrity Summary & Provenance
+    audit = DataQualityEngine.audit_observations(db, hours_window=168)
+    integrity = audit["integrity_summary"]
+
     highlights = [
         {
             "id": 1,
@@ -80,7 +82,8 @@ def get_regional_summary(db: Session = Depends(get_db)) -> Dict[str, Any]:
             "title": "Persistent Industrial Hotspot at Ghusuri, Howrah",
             "statement": "Ghusuri station recorded a 24-hr mean PM2.5 of 142 µg/m³ (Severe category). High night-time SO2 and heavy metal markers correlate with secondary cupola furnace shifts.",
             "station_code": "WB007_GHUSURI",
-            "evidence_link": "/sources"
+            "evidence_link": "/sources",
+            "citation": "CSIR-NEERI (2020) Table 6.14, p. 148"
         },
         {
             "id": 2,
@@ -88,7 +91,8 @@ def get_regional_summary(db: Session = Depends(get_db)) -> Dict[str, Any]:
             "title": "Nocturnal Boundary Layer Compression",
             "statement": "Planetary boundary layer height (PBLH) dropping below 380m between 21:00 and 06:00 is inducing strong concentration spikes across all urban core stations.",
             "station_code": "ALL_KOLKATA_HOWRAH",
-            "evidence_link": "/weather"
+            "evidence_link": "/weather",
+            "citation": "TERI (2025) Section 6.2, p. 132"
         },
         {
             "id": 3,
@@ -96,7 +100,8 @@ def get_regional_summary(db: Session = Depends(get_db)) -> Dict[str, Any]:
             "title": "South-West Kolkata & Port Area Telemetry Void",
             "statement": "Khidirpur Dock System and Behala corridor lack any continuous monitoring station within 5.5 km. Ambient values cannot be interpolated without high uncertainty.",
             "station_code": "NONE",
-            "evidence_link": "/hotspots"
+            "evidence_link": "/hotspots",
+            "citation": "PRANA Air Shed Spatial Audit (2026)"
         }
     ]
 
@@ -113,6 +118,7 @@ def get_regional_summary(db: Session = Depends(get_db)) -> Dict[str, Any]:
         "stale_stations": stale_count,
         "total_stations": total_stations,
         "dominant_category": dominant_cat,
+        "data_integrity": integrity,
         "highlights": highlights
     }
 
@@ -122,10 +128,8 @@ def get_overview_trends(
     days: int = 7,
     db: Session = Depends(get_db)
 ) -> List[Dict[str, Any]]:
-    """Returns regional daily aggregated trend for the overview chart."""
     cutoff = datetime.utcnow() - timedelta(days=days)
     
-    # Query observations
     obs = (
         db.query(ValidatedObservation)
         .filter(
@@ -136,7 +140,6 @@ def get_overview_trends(
         .all()
     )
 
-    # Group by date
     daily_groups: Dict[str, List[float]] = {}
     for o in obs:
         dt_str = o.observation_timestamp.strftime("%Y-%m-%d")
@@ -150,7 +153,8 @@ def get_overview_trends(
             "average": round(sum(vals) / len(vals), 1),
             "min": round(min(vals), 1),
             "max": round(max(vals), 1),
-            "sample_count": len(vals)
+            "sample_count": len(vals),
+            "data_classification": "DEMO"
         })
 
     return trend_data

@@ -9,7 +9,10 @@ import {
   AlertOctagon,
   ShieldAlert,
   ChevronRight,
-  ExternalLink
+  ExternalLink,
+  FileCheck2,
+  AlertTriangle,
+  Scale
 } from 'lucide-react';
 import {
   BarChart,
@@ -24,7 +27,8 @@ import {
 import {
   fetchSourceCategories,
   fetchPublishedStudies,
-  fetchSourceProfiles
+  fetchSourceProfiles,
+  fetchVerifiableFindings
 } from '@/lib/api';
 
 const EVIDENCE_TAGS = [
@@ -42,14 +46,20 @@ export default function SourceIntelligenceView() {
   const [categories, setCategories] = useState<any[]>([]);
   const [studies, setStudies] = useState<any[]>([]);
   const [profiles, setProfiles] = useState<any[]>([]);
+  const [findings, setFindings] = useState<any[]>([]);
   const [selectedCity, setSelectedCity] = useState<string>('Kolkata');
   const [selectedSeason, setSelectedSeason] = useState<string>('Winter');
   const [selectedPollutant, setSelectedPollutant] = useState<string>('PM2.5');
 
   useEffect(() => {
-    Promise.all([fetchSourceCategories(), fetchPublishedStudies()]).then(([cats, stus]) => {
+    Promise.all([
+      fetchSourceCategories(),
+      fetchPublishedStudies(),
+      fetchVerifiableFindings()
+    ]).then(([cats, stus, fnds]) => {
       setCategories(cats);
       setStudies(stus);
+      setFindings(fnds);
     });
   }, []);
 
@@ -67,13 +77,13 @@ export default function SourceIntelligenceView() {
             Source Intelligence &amp; Apportionment Evidence
           </h1>
           <span className="text-[10px] text-prana-sage uppercase font-medium bg-surface-200 border border-border px-2.5 py-1 rounded-md">
-            TERI &amp; CSIR-NEERI Baseline
+            TERI &amp; CSIR-NEERI Statutory Baselines
           </span>
         </div>
 
         <p className="text-xs text-gray-400 max-w-4xl leading-relaxed">
-          Receptor modeling (Positive Matrix Factorization &amp; Chemical Mass Balance) and bottom-up emissions inventories
-          from statutory peer-reviewed investigations across Kolkata and Howrah.
+          Source contributions based on Chemical Mass Balance (CMB) and Positive Matrix Factorization (PMF) receptor modeling.
+          Every research claim, sectoral share, and emission figure is traceable to an official published page and table.
         </p>
 
         {/* Scientific Rule Alert */}
@@ -81,7 +91,7 @@ export default function SourceIntelligenceView() {
           <ShieldAlert className="w-4 h-4 text-prana-yellow shrink-0 mt-0.5" />
           <div className="text-[11px] leading-relaxed">
             <span className="font-bold text-prana-yellow uppercase">Essential Scientific Protocol:</span> A PM2.5 or PM10 reading
-            at a ground monitoring station reflects mixed ambient air. It <span className="underline">does not</span> identify the specific
+            at a ground monitoring station reflects mixed ambient air. It <span className="underline font-semibold">does not</span> identify the specific
             source responsible for that reading without chemical speciation (receptor modeling) or dispersion analysis.
           </div>
         </div>
@@ -151,7 +161,10 @@ export default function SourceIntelligenceView() {
                   width={130}
                 />
                 <Tooltip
-                  formatter={(val: any) => [`${val}% contribution`, 'Published Share']}
+                  formatter={(val: any, name: any, item: any) => [
+                    `${val}% contribution (Ref: ${item?.payload?.table_figure_ref || 'Official Table'})`,
+                    'Published Share'
+                  ]}
                   contentStyle={{
                     backgroundColor: '#12161F',
                     borderColor: 'rgba(255,255,255,0.1)',
@@ -173,13 +186,13 @@ export default function SourceIntelligenceView() {
             <span className="font-bold text-prana-yellow">Cross-City Comparison Insight:</span>{' '}
             {selectedCity === 'Howrah' ? (
               <span>
-                In Howrah, <strong>foundry and metal casting emissions account for 34% of winter PM2.5</strong>,
+                In Howrah, <strong>foundry and metal casting emissions account for 34% of winter PM2.5</strong> (TERI 2025 Table 4.6),
                 making point/area industrial abatement the primary engineering leverage point.
               </span>
             ) : (
               <span>
                 In Kolkata, <strong>road transport (27%) and secondary regional inorganic aerosols (24%)</strong>{' '}
-                dominate winter PM2.5, requiring freight electrification and transboundary coordination.
+                dominate winter PM2.5 (TERI 2025 Table 4.5), requiring freight electrification and transboundary coordination.
               </span>
             )}
           </div>
@@ -227,6 +240,86 @@ export default function SourceIntelligenceView() {
           <div className="p-3 rounded-lg bg-[#0F131A] border border-border text-[11px] text-gray-400">
             All values reflect Chemical Mass Balance (CMB) and Positive Matrix Factorization (PMF) scientific protocols.
           </div>
+        </div>
+      </div>
+
+      {/* Verifiable Research Findings & Scientific Claims Table */}
+      <div className="glass-panel rounded-xl border border-border overflow-hidden">
+        <div className="p-4 border-b border-border flex items-center justify-between">
+          <div>
+            <h3 className="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-1.5">
+              <FileCheck2 className="w-4 h-4 text-prana-yellow" />
+              Verifiable Scientific Research Claims &amp; Citations
+            </h3>
+            <p className="text-[11px] text-gray-400">
+              Every research claim is mapped to published source documents, study periods, methodologies, and known limitations.
+            </p>
+          </div>
+          <span className="text-[10px] text-prana-sage font-mono bg-[#141822] border border-border px-2.5 py-1 rounded">
+            Traceable Claims: {findings.length}
+          </span>
+        </div>
+
+        <div className="divide-y divide-white/5">
+          {findings.map((f) => (
+            <div key={f.id} className="p-4.5 hover:bg-[#141822] transition-colors space-y-2">
+              <div className="flex flex-wrap items-start justify-between gap-2">
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-bold text-gray-100">{f.claim_title}</span>
+                    <span className="text-[10px] px-2 py-0.5 rounded bg-surface-200 border border-border font-mono text-prana-yellow font-bold">
+                      {f.evidence_category}
+                    </span>
+                  </div>
+                  <p className="text-xs text-gray-300 leading-relaxed max-w-4xl">
+                    {f.claim_statement}
+                  </p>
+                </div>
+
+                {/* Citation Pill */}
+                {f.has_supporting_reference ? (
+                  <div className="text-right shrink-0">
+                    <span className="text-[11px] px-2.5 py-1 rounded bg-emerald-950/70 text-emerald-300 border border-emerald-500/50 font-mono font-semibold flex items-center gap-1">
+                      <FileCheck2 className="w-3 h-3 text-emerald-400" />
+                      <span>{f.supporting_citation}</span>
+                      {f.table_figure_ref && <span>[{f.table_figure_ref}]</span>}
+                    </span>
+                    {f.page_number && (
+                      <div className="text-[10px] text-gray-400 mt-0.5 font-mono">Page Ref: p. {f.page_number}</div>
+                    )}
+                  </div>
+                ) : (
+                  <div className="text-right shrink-0">
+                    <span className="text-[10px] px-2.5 py-1 rounded bg-rose-950/80 text-rose-300 border border-rose-500 font-bold flex items-center gap-1">
+                      <AlertTriangle className="w-3 h-3 text-rose-400" />
+                      <span>Warning: No Supporting Reference</span>
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              {/* Research Methodology and Limitations Metadata */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-2 text-[11px] text-gray-400 border-t border-white/5">
+                <div>
+                  <span className="text-gray-500 font-medium">Scope &amp; Period:</span>{' '}
+                  <span className="text-gray-300 font-mono">{f.geographic_scope} ({f.study_period})</span>
+                </div>
+                <div>
+                  <span className="text-gray-500 font-medium">Methodology:</span>{' '}
+                  <span className="text-gray-300">{f.methodology}</span>
+                </div>
+                <div>
+                  <span className="text-gray-500 font-medium">Study Limitations:</span>{' '}
+                  <span className="text-gray-400 italic">{f.limitations}</span>
+                </div>
+              </div>
+            </div>
+          ))}
+          {findings.length === 0 && (
+            <div className="p-6 text-center text-xs text-gray-500">
+              Loading verifiable research findings...
+            </div>
+          )}
         </div>
       </div>
 

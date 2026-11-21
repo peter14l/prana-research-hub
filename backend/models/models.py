@@ -1,5 +1,5 @@
 """
-SQLAlchemy models for PRANA Research Hub
+SQLAlchemy models for PRANA Research Hub (Milestone 2 - Data Provenance & Integrity)
 """
 from datetime import datetime
 from sqlalchemy import (
@@ -18,7 +18,13 @@ class DataProvider(Base):
     portal_url = Column(String(255), nullable=True)
     description = Column(Text, nullable=True)
     status = Column(String(30), default="ACTIVE") # ACTIVE, DEGRADED, OFFLINE
+    connection_status = Column(String(50), default="CONNECTED") # CONNECTED, DEGRADED, DISCONNECTED, AUTH_REQUIRED, MANUAL_PORTAL_ONLY
     last_synced_at = Column(DateTime, nullable=True)
+    last_failed_at = Column(DateTime, nullable=True)
+    last_error_message = Column(Text, nullable=True)
+    retrieval_method = Column(String(50), default="REST_API") # REST_API, MANUAL_CSV_IMPORT, REANALYSIS_API
+    available_date_range_start = Column(DateTime, nullable=True)
+    available_date_range_end = Column(DateTime, nullable=True)
 
     stations = relationship("MonitoringStation", back_populates="provider")
     ingestion_logs = relationship("IngestionLog", back_populates="provider_rel")
@@ -27,7 +33,8 @@ class MonitoringStation(Base):
     __tablename__ = "monitoring_stations"
 
     id = Column(Integer, primary_key=True, index=True)
-    station_code = Column(String(50), unique=True, index=True, nullable=False) # e.g. "WB001_VICTORIA", "WB005_GHUSURI"
+    station_code = Column(String(50), unique=True, index=True, nullable=False) # e.g. "WB001_VICTORIA", "WB007_GHUSURI"
+    cpcb_site_id = Column(String(50), nullable=True) # e.g. "site_5002"
     name = Column(String(150), nullable=False)
     city = Column(String(50), nullable=False) # "Kolkata" or "Howrah"
     area_type = Column(String(50), default="Urban") # "Commercial", "Residential", "Industrial", "Background", "Traffic"
@@ -39,6 +46,14 @@ class MonitoringStation(Base):
     active = Column(Boolean, default=True)
     is_demo = Column(Boolean, default=False)
     commissioned_date = Column(String(20), nullable=True)
+    
+    # Milestone 2: Station Verification Registry
+    verification_status = Column(String(50), default="VERIFIED") # VERIFIED, PENDING_AUDIT, UNVERIFIED, DISCREPANCY_FLAGGED
+    verification_date = Column(String(30), default="2026-11-21")
+    verification_source_url = Column(String(255), default="https://app.cpcbccr.com/ccr_docs")
+    verified_parameters = Column(String(255), default="PM2.5, PM10, NO2, SO2, CO, O3, NH3")
+    verification_notes = Column(Text, nullable=True)
+
     metadata_json = Column(JSON, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
 
@@ -88,10 +103,19 @@ class ValidatedObservation(Base):
     unit = Column(String(20), nullable=False)
     observation_timestamp = Column(DateTime, nullable=False, index=True)
     is_valid = Column(Boolean, default=True)
-    quality_status = Column(String(50), default="VALID") # VALID, SUSPECT_OUTLIER, STALE, MISSING, SENSOR_FAULT, UNIT_NORMALIZED
+    
+    # Milestone 2: Detailed Provenance & Classification
+    data_classification = Column(String(30), default="DEMO", index=True) # VERIFIED, IMPORTED, DERIVED, DEMO, UNVERIFIED
+    original_data_provider = Column(String(50), default="WBPCB")
+    original_station_id = Column(String(50), default="")
+    original_source_record = Column(Text, nullable=True) # URL or raw identifier
+    provenance_hash = Column(String(64), nullable=True)
+    
+    # Milestone 2: Rich Quality Status
+    quality_status = Column(String(50), default="VALID") # VALID, SUSPECT_OUTLIER, STALE, MISSING, SENSOR_FAULT, INVALID_UNIT, DUPLICATE, TIMESTAMP_ANOMALY
     z_score = Column(Float, nullable=True)
     flag_reason = Column(String(255), nullable=True)
-    provenance = Column(String(100), default="WBPCB/CPCB Standard Automated Ingestion")
+    provenance = Column(String(100), default="Synthetic Demonstration Dataset (seed_data.py)")
 
     station = relationship("MonitoringStation", back_populates="validated_observations")
     raw_observation = relationship("RawObservation", back_populates="validated")
@@ -108,6 +132,7 @@ class StationAQIRecord(Base):
     sub_indices = Column(JSON, nullable=True) # { "PM2.5": 142, "PM10": 110, "NO2": 45, ... }
     is_valid_cpcb = Column(Boolean, default=True) # Requires >=3 pollutants with >=1 PM2.5 or PM10
     methodology = Column(String(50), default="CPCB_2014_NAQI")
+    data_classification = Column(String(30), default="DERIVED") # Sub-indices and AQI are derived
 
     station = relationship("MonitoringStation", back_populates="aqi_records")
 
@@ -119,15 +144,16 @@ class WeatherObservation(Base):
     latitude = Column(Float, nullable=False)
     longitude = Column(Float, nullable=False)
     observation_timestamp = Column(DateTime, nullable=False, index=True)
-    temperature_c = Column(Float, nullable=True) # °C
-    relative_humidity_pct = Column(Float, nullable=True) # %
-    wind_speed_kmh = Column(Float, nullable=True) # km/h
-    wind_direction_deg = Column(Float, nullable=True) # degrees (0-360)
-    wind_direction_cardinal = Column(String(10), nullable=True) # N, NE, E, SE, S, SW, W, NW
-    rainfall_mm = Column(Float, nullable=True) # mm
-    surface_pressure_hpa = Column(Float, nullable=True) # hPa
-    boundary_layer_height_m = Column(Float, nullable=True) # Planetary Boundary Layer Height in meters
-    data_provider = Column(String(50), default="Open-Meteo ERA5 Reanalysis")
+    temperature_c = Column(Float, nullable=True)
+    relative_humidity_pct = Column(Float, nullable=True)
+    wind_speed_kmh = Column(Float, nullable=True)
+    wind_direction_deg = Column(Float, nullable=True)
+    wind_direction_cardinal = Column(String(10), nullable=True)
+    rainfall_mm = Column(Float, nullable=True)
+    surface_pressure_hpa = Column(Float, nullable=True)
+    boundary_layer_height_m = Column(Float, nullable=True)
+    data_provider = Column(String(50), default="Open-Meteo High-Resolution Reanalysis")
+    data_classification = Column(String(30), default="DEMO") # DEMO for seed, VERIFIED when fetched from live API
 
 class AdministrativeBoundary(Base):
     __tablename__ = "administrative_boundaries"
@@ -148,7 +174,7 @@ class ResearchDocument(Base):
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String(255), nullable=False)
     organisation = Column(String(150), nullable=False)
-    publication_date = Column(String(50), nullable=False) # e.g. "January 2025"
+    publication_date = Column(String(50), nullable=False)
     geographic_coverage = Column(String(150), nullable=False)
     pollutants_studied = Column(String(150), nullable=False)
     methodology = Column(Text, nullable=False)
@@ -156,7 +182,7 @@ class ResearchDocument(Base):
     limitations = Column(Text, nullable=False)
     original_url = Column(String(500), nullable=True)
     study_type = Column(String(100), default="Source Apportionment")
-    confidence_tier = Column(String(30), default="HIGH_PEER_REVIEWED")
+    confidence_tier = Column(String(50), default="HIGH_PEER_REVIEWED")
     tags = Column(String(255), nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
 
@@ -173,6 +199,12 @@ class ResearchFinding(Base):
     statement = Column(Text, nullable=False)
     evidence_data = Column(JSON, nullable=True)
     confidence = Column(String(30), default="HIGH")
+    
+    # Milestone 2: Exact citation traceability
+    citation_reference = Column(String(150), nullable=True) # e.g. "TERI (2025) Table 4.5, p. 84"
+    page_number = Column(String(30), nullable=True)
+    table_figure_ref = Column(String(50), nullable=True)
+    has_supporting_reference = Column(Boolean, default=True)
 
     document = relationship("ResearchDocument", back_populates="findings")
 
@@ -195,10 +227,10 @@ class SourceCategory(Base):
     id = Column(Integer, primary_key=True, index=True)
     code = Column(String(50), unique=True, index=True, nullable=False)
     name = Column(String(100), nullable=False)
-    sector = Column(String(100), nullable=False) # Transport, Industry, Waste, Construction, Domestic, Regional
+    sector = Column(String(100), nullable=False)
     description = Column(Text, nullable=True)
-    primary_pollutants = Column(String(100), nullable=False) # e.g. "PM2.5, PM10, NO2, BC"
-    typical_marker_species = Column(String(150), nullable=True) # e.g. "Elemental Carbon, Sulfate, Zn, Pb"
+    primary_pollutants = Column(String(100), nullable=False)
+    typical_marker_species = Column(String(150), nullable=True)
 
     profiles = relationship("SourceContributionProfile", back_populates="category")
 
@@ -209,8 +241,8 @@ class SourceApportionmentStudy(Base):
     study_name = Column(String(200), nullable=False)
     organisation = Column(String(150), nullable=False)
     publication_year = Column(Integer, nullable=False)
-    methodology = Column(String(100), nullable=False) # "CMB (Chemical Mass Balance)", "PMF (Positive Matrix Factorization)", "Bottom-up Emission Inventory"
-    geographic_scope = Column(String(150), nullable=False) # "Kolkata & Howrah Twin Cities"
+    methodology = Column(String(100), nullable=False)
+    geographic_scope = Column(String(150), nullable=False)
     study_period = Column(String(100), nullable=False)
     documentation_url = Column(String(500), nullable=True)
     limitations = Column(Text, nullable=True)
@@ -227,11 +259,17 @@ class SourceContributionProfile(Base):
     pollutant = Column(String(20), nullable=False) # "PM2.5", "PM10"
     season = Column(String(30), nullable=False) # "Winter", "Summer", "Monsoon", "Annual"
     city = Column(String(50), default="Kolkata") # "Kolkata" or "Howrah"
-    contribution_percentage = Column(Float, nullable=False) # e.g. 28.5%
+    contribution_percentage = Column(Float, nullable=False)
     concentration_ugm3 = Column(Float, nullable=True)
     uncertainty_min = Column(Float, nullable=True)
     uncertainty_max = Column(Float, nullable=True)
     evidence_type = Column(String(50), default="PUBLISHED_SOURCE_APPORTIONMENT")
+    
+    # Milestone 2: Citation traceability
+    citation_reference = Column(String(150), nullable=True) # e.g. "TERI (2025) Table 4.2, p. 78"
+    page_number = Column(String(30), nullable=True)
+    table_figure_ref = Column(String(50), nullable=True)
+    has_supporting_reference = Column(Boolean, default=True)
 
     study = relationship("SourceApportionmentStudy", back_populates="profiles")
     category = relationship("SourceCategory", back_populates="profiles")
@@ -242,7 +280,7 @@ class InterventionHypothesis(Base):
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String(255), nullable=False)
     problem_statement = Column(Text, nullable=False)
-    target_area = Column(String(150), nullable=False) # e.g. "Ghusuri Industrial Cluster, Howrah"
+    target_area = Column(String(150), nullable=False)
     target_pollutant = Column(String(50), default="PM2.5 & PM10")
     suspected_source = Column(String(150), nullable=False)
     supporting_evidence = Column(Text, nullable=False)
@@ -252,28 +290,18 @@ class InterventionHypothesis(Base):
     possible_implementation_partner = Column(String(200), nullable=False)
     measurable_indicators = Column(Text, nullable=False)
     risks_limitations = Column(Text, nullable=False)
-    research_confidence = Column(String(30), default="MEDIUM") # HIGH, MEDIUM, LOW
+    research_confidence = Column(String(30), default="MEDIUM")
     validation_requirements = Column(Text, nullable=False)
     
-    # Quantitative scoring (1-10)
     feasibility_score = Column(Float, default=7.0)
     potential_reduction_score = Column(Float, default=8.0)
-    cost_complexity_score = Column(Float, default=6.0) # lower = cheaper/simpler
+    cost_complexity_score = Column(Float, default=6.0)
     ease_of_verification_score = Column(Float, default=7.5)
     scalability_score = Column(Float, default=8.0)
     
-    # Evaluation Framework Specification
     evaluation_framework = Column(JSON, nullable=True)
-    # {
-    #   "baseline_period_days": 90,
-    #   "intervention_period_days": 180,
-    #   "control_station": "Victoria Memorial",
-    #   "impact_station": "Ghusuri",
-    #   "weather_normalization_method": "Random Forest / GAM meteorological de-weathering",
-    #   "confounding_factors": ["Diwali fireworks", "Brick kiln seasonal operation", "Regional crop residue burning"]
-    # }
-    
-    status = Column(String(50), default="DRAFT_HYPOTHESIS") # DRAFT_HYPOTHESIS, UNDER_REVIEW, BENCH_VALIDATED, PROPOSAL_READY
+    status = Column(String(50), default="DRAFT_HYPOTHESIS")
+    data_classification = Column(String(30), default="RESEARCH_HYPOTHESIS")
     created_at = Column(DateTime, default=datetime.utcnow)
 
 class IngestionLog(Base):
@@ -287,6 +315,7 @@ class IngestionLog(Base):
     status = Column(String(30), default="PENDING") # SUCCESS, WARNING, FAILED
     records_processed = Column(Integer, default=0)
     records_flagged = Column(Integer, default=0)
+    data_classification = Column(String(30), default="DEMO") # DEMO, IMPORTED, VERIFIED
     message = Column(Text, nullable=True)
 
     provider_rel = relationship("DataProvider", back_populates="ingestion_logs")
