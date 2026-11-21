@@ -183,17 +183,17 @@ export default function OpportunityExplorerView() {
           <div>
             <div className="flex items-center gap-2 mb-2">
               <span className="px-2 py-0.5 rounded text-[11px] font-semibold bg-prana-yellow/20 text-prana-yellow border border-prana-yellow/30">
-                MILESTONE 4
+                MILESTONE 5
               </span>
-              <span className="text-xs text-gray-400">Evidence-Driven Opportunity Discovery</span>
+              <span className="text-xs text-gray-400">Evidence Integrity & Opportunity Recalibration</span>
             </div>
             <h1 className="text-2xl font-bold text-white tracking-tight flex items-center gap-3">
               <Target className="w-6 h-6 text-prana-yellow" />
-              Opportunity Explorer & Engineering Prioritisation
+              Opportunity Explorer & Evidence Integrity Engine
             </h1>
             <p className="text-sm text-gray-400 mt-1 max-w-3xl">
-              Transparent multi-criteria evaluation of outdoor air pollution reduction opportunities across Kolkata–Howrah.
-              Prioritizes source-level engineering interventions with verifiable counterfactual measurement protocols.
+              Transparent multi-criteria evaluation and forensic evidence audit of air pollution reduction opportunities across Kolkata–Howrah.
+              Zero-credit rule enforces that synthetic data, unverified hypotheses, and missing citations cannot inflate confidence scores.
             </p>
           </div>
 
@@ -312,8 +312,8 @@ export default function OpportunityExplorerView() {
             <div className="p-4 border-b border-border flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <h3 className="text-sm font-semibold text-white">Evaluated Engineering Candidates ({candidates.length})</h3>
-                <span className="px-2 py-0.5 rounded text-[10px] bg-surface-200 text-gray-400 border border-border">
-                  Grounded in Kolkata–Howrah Data
+                <span className="px-2 py-0.5 rounded text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+                  Milestone 5 Audited & Recalibrated
                 </span>
               </div>
 
@@ -342,12 +342,15 @@ export default function OpportunityExplorerView() {
                 <thead className="bg-surface-200/80 text-gray-400 text-[11px] uppercase tracking-wider border-b border-border">
                   <tr>
                     <th className="py-3 px-4">Rank</th>
-                    <th className="py-3 px-4">Opportunity Title</th>
+                    <th className="py-3 px-4">Opportunity Title & Evidence Integrity</th>
                     <th className="py-3 px-4">Sector</th>
                     <th className="py-3 px-4">Stage Status</th>
                     <th className="py-3 px-4">Decision</th>
                     <th className="py-3 px-4 text-center">Impact</th>
-                    <th className="py-3 px-4 text-center">Evidence</th>
+                    <th className="py-3 px-4 text-center">
+                      <span className="text-prana-yellow">Audited Evidence</span>
+                      <span className="block text-[9px] text-gray-500 font-normal">Pre-Audit vs Current</span>
+                    </th>
                     <th className="py-3 px-4 text-center">Tech</th>
                     <th className="py-3 px-4 text-center">Verify</th>
                     <th className="py-3 px-4 text-right">Weighted Score</th>
@@ -371,7 +374,24 @@ export default function OpportunityExplorerView() {
                         </td>
                         <td className="py-3.5 px-4">
                           <div className="font-semibold text-gray-100 max-w-sm truncate">{cand.title}</div>
-                          <div className="text-[11px] text-gray-400 truncate">{cand.target_pollutant}</div>
+                          <div className="flex items-center gap-2 mt-1 flex-wrap">
+                            <span className="text-[11px] text-gray-400">{cand.target_pollutant}</span>
+                            {cand.derived_distance_km && (
+                              <span className="px-1.5 py-0.2 rounded text-[10px] bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">
+                                {cand.derived_distance_km} km [DERIVED]
+                              </span>
+                            )}
+                            {cand.has_synthetic_dependency && (
+                              <span className="px-1.5 py-0.2 rounded text-[10px] bg-amber-500/15 text-amber-300 border border-amber-500/30 font-medium">
+                                ⚠️ SYNTHETIC DEP (0 Cr)
+                              </span>
+                            )}
+                            {cand.has_unverified_claims && (
+                              <span className="px-1.5 py-0.2 rounded text-[10px] bg-orange-500/15 text-orange-300 border border-orange-500/30 font-medium">
+                                ⚠️ UNVERIFIED CLAIMS
+                              </span>
+                            )}
+                          </div>
                         </td>
                         <td className="py-3.5 px-4 text-gray-300">
                           <span className="px-2 py-0.5 rounded text-[10px] bg-surface-300 text-gray-300 border border-border">
@@ -408,8 +428,16 @@ export default function OpportunityExplorerView() {
                         <td className="py-3.5 px-4 text-center font-mono font-semibold text-gray-200">
                           {cand.pollution_impact_score}
                         </td>
-                        <td className="py-3.5 px-4 text-center font-mono font-semibold text-gray-200">
-                          {cand.evidence_strength_score}
+                        <td className="py-3.5 px-4 text-center">
+                          <div className="font-mono font-bold text-gray-100 flex items-center justify-center gap-1">
+                            <span>{cand.evidence_strength_score}</span>
+                            {cand.pre_audit_evidence_score && cand.pre_audit_evidence_score !== cand.evidence_strength_score && (
+                              <span className="text-[10px] text-gray-500 line-through font-normal" title={`Pre-audit evidence score: ${cand.pre_audit_evidence_score}`}>
+                                ({cand.pre_audit_evidence_score})
+                              </span>
+                            )}
+                          </div>
+                          <div className="text-[9px] text-emerald-400">audited</div>
                         </td>
                         <td className="py-3.5 px-4 text-center font-mono font-semibold text-gray-200">
                           {cand.technical_feasibility_score}
@@ -418,10 +446,17 @@ export default function OpportunityExplorerView() {
                           {cand.verification_score}
                         </td>
                         <td className="py-3.5 px-4 text-right">
-                          <span className="text-sm font-bold text-prana-yellow font-mono">
-                            {cand.weighted_priority_score}
-                          </span>
-                          <span className="text-[10px] text-gray-500"> / 10</span>
+                          <div className="flex items-baseline justify-end gap-1">
+                            <span className="text-sm font-bold text-prana-yellow font-mono">
+                              {cand.weighted_priority_score}
+                            </span>
+                            {cand.pre_audit_priority_score && cand.pre_audit_priority_score !== cand.weighted_priority_score && (
+                              <span className="text-[10px] text-gray-500 line-through font-mono" title={`Pre-audit priority score: ${cand.pre_audit_priority_score}`}>
+                                {cand.pre_audit_priority_score}
+                              </span>
+                            )}
+                          </div>
+                          <div className="text-[9px] text-gray-500">out of 10</div>
                         </td>
                         <td className="py-3.5 px-4 text-right">
                           <button
@@ -496,6 +531,194 @@ export default function OpportunityExplorerView() {
                 </button>
               </div>
             </div>
+          </div>
+
+          {/* ========================================================================= */}
+          {/* MILESTONE 5: EVIDENCE INTEGRITY, FORENSIC AUDIT & REBUILT SCORING CARD     */}
+          {/* ========================================================================= */}
+          <div className="bg-surface-100 border border-border rounded-xl p-6 space-y-5">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-border gap-2">
+              <div>
+                <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                  <Shield className="w-4 h-4 text-emerald-400" />
+                  Milestone 5 Evidence Integrity & Recalibration Audit
+                </h3>
+                <p className="text-xs text-gray-400 mt-0.5">
+                  Full disclosure of verified records, derived geometric distances, synthetic dependencies, and missing citations.
+                </p>
+              </div>
+
+              {/* Pre-audit vs Recalibrated Comparison Badge */}
+              <div className="flex items-center gap-3 bg-surface-200 px-3 py-1.5 rounded-lg border border-border">
+                <div className="text-[11px]">
+                  <span className="text-gray-400 block text-[9px] uppercase tracking-wider">Evidence Score</span>
+                  <div className="flex items-baseline gap-1.5">
+                    {selectedCandidate.pre_audit_evidence_score && (
+                      <span className="text-gray-500 line-through text-xs font-mono">{selectedCandidate.pre_audit_evidence_score}</span>
+                    )}
+                    <span className="text-emerald-400 font-bold font-mono text-sm">{selectedCandidate.evidence_strength_score}</span>
+                    <span className="text-[10px] text-gray-500">/ 10</span>
+                  </div>
+                </div>
+                <div className="h-6 w-px bg-border"></div>
+                <div className="text-[11px]">
+                  <span className="text-gray-400 block text-[9px] uppercase tracking-wider">Priority Score</span>
+                  <div className="flex items-baseline gap-1.5">
+                    {selectedCandidate.pre_audit_priority_score && (
+                      <span className="text-gray-500 line-through text-xs font-mono">{selectedCandidate.pre_audit_priority_score}</span>
+                    )}
+                    <span className="text-prana-yellow font-bold font-mono text-sm">{selectedCandidate.weighted_priority_score}</span>
+                    <span className="text-[10px] text-gray-500">/ 10</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Warning Banners */}
+            {selectedCandidate.has_synthetic_dependency && (
+              <div className="p-3.5 rounded-lg bg-amber-500/10 border border-amber-500/30 flex items-start gap-3">
+                <AlertTriangle className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
+                <div className="text-xs text-amber-200/90 leading-relaxed">
+                  <span className="font-bold text-amber-300">SYNTHETIC DATA DEPENDENCY DETECTED:</span> This candidate previously cited
+                  demonstration or synthetic records (e.g. simulated nocturnal spikes). Under Milestone 5 rules, synthetic records receive
+                  <strong> 0.0 credit</strong> and cannot inflate scientific evidence scores.
+                </div>
+              </div>
+            )}
+
+            {selectedCandidate.has_unverified_claims && (
+              <div className="p-3.5 rounded-lg bg-orange-500/10 border border-orange-500/30 flex items-start gap-3">
+                <Info className="w-5 h-5 text-orange-400 shrink-0 mt-0.5" />
+                <div className="text-xs text-orange-200/90 leading-relaxed">
+                  <span className="font-bold text-orange-300">UNVERIFIED HYPOTHESES / MISSING EVIDENCE:</span> Certain operational claims
+                  or unfulfilled citations (e.g. unverified unit censuses or uningested satellite observations) have been segregated into research gaps and
+                  assigned <strong>zero weight</strong> in the recalibrated confidence score.
+                </div>
+              </div>
+            )}
+
+            {/* Derived Distance Callout if Applicable */}
+            {selectedCandidate.derived_distance_km && (
+              <div className="p-3 rounded-lg bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-between">
+                <div className="text-xs text-cyan-200">
+                  <span className="font-bold text-cyan-300">DERIVED SPATIAL GAP:</span> Nearest statutory monitoring station (Padmapukur CAAQM site_5010) is{' '}
+                  <strong className="text-white font-mono">{selectedCandidate.derived_distance_km} km</strong> from the Jalan industrial centroid (22.59°N, 88.24°E).
+                </div>
+                <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/40">
+                  DERIVED_RESULT (Haversine)
+                </span>
+              </div>
+            )}
+
+            {/* Two Column Summary: Verified vs Missing Evidence */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="p-4 rounded-xl bg-surface-200/80 border border-emerald-500/30">
+                <div className="flex items-center gap-2 mb-2 text-emerald-400 font-semibold text-xs">
+                  <CheckCircle2 className="w-4 h-4" />
+                  Verified & Traceable Evidence ({selectedCandidate.evidence_strength_score}/10)
+                </div>
+                <p className="text-xs text-gray-300 leading-relaxed whitespace-pre-line">
+                  {selectedCandidate.verified_evidence_summary || 'No verified observations recorded in database.'}
+                </p>
+              </div>
+
+              <div className="p-4 rounded-xl bg-surface-200/80 border border-rose-500/30">
+                <div className="flex items-center gap-2 mb-2 text-rose-400 font-semibold text-xs">
+                  <XCircle className="w-4 h-4" />
+                  Missing Evidence & Disclosed Gaps (0.0 Credit)
+                </div>
+                <p className="text-xs text-gray-300 leading-relaxed whitespace-pre-line">
+                  {selectedCandidate.missing_evidence_summary || 'No missing evidence flagged.'}
+                </p>
+              </div>
+            </div>
+
+            {/* Rebuilt 6-Dimension Evaluation Matrix */}
+            {selectedCandidate.rebuilt_scores && (
+              <div className="pt-2">
+                <h4 className="text-xs font-semibold text-gray-300 uppercase tracking-wider mb-3">
+                  Rebuilt 6-Dimension Opportunity Evaluation (Separated from Technical Narrative)
+                </h4>
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2.5">
+                  {[
+                    { key: 'pollution_impact_potential', label: 'Pollution Impact Potential', score: selectedCandidate.rebuilt_scores.pollution_impact_potential, color: 'text-prana-yellow' },
+                    { key: 'evidence_strength', label: 'Audited Evidence Strength', score: selectedCandidate.rebuilt_scores.evidence_strength, color: 'text-emerald-400' },
+                    { key: 'engineering_feasibility', label: 'Engineering Feasibility', score: selectedCandidate.rebuilt_scores.engineering_feasibility, color: 'text-blue-400' },
+                    { key: 'prototype_affordability', label: 'Prototype Affordability', score: selectedCandidate.rebuilt_scores.prototype_affordability, color: 'text-purple-400' },
+                    { key: 'measurement_and_verification_feasibility', label: 'M&V Feasibility', score: selectedCandidate.rebuilt_scores.measurement_and_verification_feasibility, color: 'text-cyan-400' },
+                    { key: 'partnership_feasibility', label: 'Partnership Feasibility', score: selectedCandidate.rebuilt_scores.partnership_feasibility, color: 'text-amber-400' }
+                  ].map((dim) => (
+                    <div key={dim.key} className="p-2.5 rounded-lg bg-surface-200 border border-border">
+                      <div className="text-[10px] text-gray-400 truncate mb-1" title={dim.label}>{dim.label}</div>
+                      <div className="flex items-baseline justify-between">
+                        <span className={`text-sm font-bold font-mono ${dim.color}`}>{dim.score}</span>
+                        <span className="text-[10px] text-gray-500">/ 10</span>
+                      </div>
+                      <div className="w-full bg-surface-300 h-1 rounded-full overflow-hidden mt-1.5">
+                        <div
+                          className="bg-current h-full rounded-full"
+                          style={{ width: `${(dim.score / 10) * 100}%` }}
+                        ></div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Claim-by-Claim Forensic Audit Table */}
+            {selectedCandidate.evidence_audit_breakdown && selectedCandidate.evidence_audit_breakdown.length > 0 && (
+              <div className="pt-2">
+                <h4 className="text-xs font-semibold text-gray-300 uppercase tracking-wider mb-2 flex items-center gap-2">
+                  <FileText className="w-3.5 h-3.5 text-prana-yellow" />
+                  Claim-by-Claim Evidence Classification Audit Trail ({selectedCandidate.evidence_audit_breakdown.length} Claims)
+                </h4>
+                <div className="overflow-x-auto rounded-lg border border-border">
+                  <table className="w-full text-left text-xs">
+                    <thead className="bg-surface-200/90 text-gray-400 text-[10px] uppercase tracking-wider border-b border-border">
+                      <tr>
+                        <th className="py-2.5 px-3">Candidate Claim</th>
+                        <th className="py-2.5 px-3">Classification</th>
+                        <th className="py-2.5 px-3">Supporting Citation / DB Record</th>
+                        <th className="py-2.5 px-3">Support Type</th>
+                        <th className="py-2.5 px-3">Auditor Scientific Notes</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-border bg-surface-200/40">
+                      {selectedCandidate.evidence_audit_breakdown.map((item: any, idx: number) => {
+                        let statusColor = 'bg-gray-500/10 text-gray-300 border-gray-500/30';
+                        if (item.status === 'VERIFIED_OBSERVATION') statusColor = 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30';
+                        else if (item.status === 'PUBLISHED_RESEARCH') statusColor = 'bg-blue-500/15 text-blue-300 border-blue-500/30';
+                        else if (item.status === 'DERIVED_RESULT') statusColor = 'bg-cyan-500/15 text-cyan-300 border-cyan-500/30';
+                        else if (item.status === 'SYNTHETIC_DATA') statusColor = 'bg-amber-500/15 text-amber-300 border-amber-500/30';
+                        else if (item.status === 'UNVERIFIED_HYPOTHESIS') statusColor = 'bg-orange-500/15 text-orange-300 border-orange-500/30';
+                        else if (item.status === 'MISSING_EVIDENCE') statusColor = 'bg-rose-500/15 text-rose-300 border-rose-500/30';
+
+                        return (
+                          <tr key={idx} className="hover:bg-surface-200 transition-colors">
+                            <td className="py-2.5 px-3 font-medium text-gray-200 max-w-xs">{item.claim}</td>
+                            <td className="py-2.5 px-3 whitespace-nowrap">
+                              <span className={`px-2 py-0.5 rounded text-[10px] font-bold border ${statusColor}`}>
+                                {item.status}
+                              </span>
+                            </td>
+                            <td className="py-2.5 px-3 text-gray-300 font-mono text-[11px] max-w-xs truncate" title={item.source_or_citation}>
+                              {item.source_or_citation}
+                            </td>
+                            <td className="py-2.5 px-3 whitespace-nowrap text-[10px] text-gray-400">
+                              <span className="px-1.5 py-0.5 rounded bg-surface-300 border border-border">
+                                {item.support_type}
+                              </span>
+                            </td>
+                            <td className="py-2.5 px-3 text-gray-400 text-[11px] leading-relaxed">{item.notes}</td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* 8-Criteria Radar / Breakdown Card */}

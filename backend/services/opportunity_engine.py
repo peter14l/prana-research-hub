@@ -15,6 +15,15 @@ from backend.models.models import (
 )
 from backend.models.schemas import EvaluationWeights
 
+SUPPORTED_EVIDENCE_STATUSES = {
+    "VERIFIED_OBSERVATION",
+    "PUBLISHED_RESEARCH",
+    "DERIVED_RESULT",
+    "SYNTHETIC_DATA",
+    "UNVERIFIED_HYPOTHESIS",
+    "MISSING_EVIDENCE"
+}
+
 class OpportunityEngine:
     DEFAULT_WEIGHTS = {
         "pollution_impact": 0.20,
@@ -291,6 +300,38 @@ class OpportunityEngine:
 
         return sectors
 
+    @staticmethod
+    def calculate_evidence_score_from_audit(audit_items: List[Dict[str, Any]]) -> float:
+        """
+        Milestone 5 Evidence Integrity Rule:
+        Strictly computes evidence strength score from verified ground observations
+        and statutory published research. Synthetic data, unverified hypotheses,
+        and missing evidence receive 0.0 credit.
+        """
+        score = 1.0 # Minimum baseline
+        for item in audit_items:
+            status = item.get("status", "")
+            support = item.get("support_type", "")
+
+            if status == "PUBLISHED_RESEARCH":
+                if support == "DIRECT_SUPPORT":
+                    score += 4.0
+                elif support == "REGIONAL_CONTEXT":
+                    score += 2.2
+                elif support == "GAP_ACKNOWLEDGEMENT":
+                    score += 1.0
+            elif status == "VERIFIED_OBSERVATION":
+                if support == "DIRECT_SUPPORT":
+                    score += 2.8
+            elif status == "DERIVED_RESULT":
+                if support == "DIRECT_SUPPORT":
+                    score += 2.0
+            elif status in ["SYNTHETIC_DATA", "UNVERIFIED_HYPOTHESIS", "MISSING_EVIDENCE"]:
+                # Zero credit rule: do not allow synthetic or missing claims to inflate scores
+                score += 0.0
+
+        return round(min(10.0, score), 1)
+
     @classmethod
     def evaluate_candidates(
         cls,
@@ -350,6 +391,21 @@ class OpportunityEngine:
                 except Exception:
                     history = []
 
+            # Parse audit breakdown and rebuilt scores
+            audit_breakdown = []
+            if c.evidence_audit_breakdown:
+                try:
+                    audit_breakdown = json.loads(c.evidence_audit_breakdown) if isinstance(c.evidence_audit_breakdown, str) else c.evidence_audit_breakdown
+                except Exception:
+                    audit_breakdown = []
+
+            rebuilt_scores = {}
+            if c.rebuilt_scores:
+                try:
+                    rebuilt_scores = json.loads(c.rebuilt_scores) if isinstance(c.rebuilt_scores, str) else c.rebuilt_scores
+                except Exception:
+                    rebuilt_scores = {}
+
             # Calculate weighted composite priority score (1.0 - 10.0 scale)
             composite_score = (
                 c.pollution_impact_score * norm_w["pollution_impact"] +
@@ -396,6 +452,16 @@ class OpportunityEngine:
                 "shortlist_status": c.shortlist_status,
                 "shortlist_notes": c.shortlist_notes,
                 "data_classification": c.data_classification,
+                # Milestone 5 Audit fields
+                "pre_audit_evidence_score": c.pre_audit_evidence_score,
+                "pre_audit_priority_score": c.pre_audit_priority_score,
+                "evidence_audit_breakdown": audit_breakdown,
+                "has_synthetic_dependency": bool(c.has_synthetic_dependency),
+                "has_unverified_claims": bool(c.has_unverified_claims),
+                "verified_evidence_summary": c.verified_evidence_summary,
+                "missing_evidence_summary": c.missing_evidence_summary,
+                "derived_distance_km": c.derived_distance_km,
+                "rebuilt_scores": rebuilt_scores,
                 "created_at": c.created_at.isoformat() if c.created_at else None,
                 "updated_at": c.updated_at.isoformat() if c.updated_at else None
             })
@@ -515,3 +581,8 @@ class OpportunityEngine:
             "shortlist_status": candidate.shortlist_status,
             "shortlist_notes": candidate.shortlist_notes
         }
+
+# Module-level aliases for convenient access
+calculate_evidence_score_from_audit = OpportunityEngine.calculate_evidence_score_from_audit
+evaluate_candidates = OpportunityEngine.evaluate_candidates
+

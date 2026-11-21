@@ -344,6 +344,17 @@ class CandidateOpportunityOut(BaseModel):
     rank: Optional[int] = None
     score_explanations: Optional[Dict[str, str]] = None
     
+    # Milestone 5: Evidence Integrity & Audit Trails
+    pre_audit_evidence_score: Optional[float] = None
+    pre_audit_priority_score: Optional[float] = None
+    evidence_audit_breakdown: Optional[List[Dict[str, Any]]] = None
+    has_synthetic_dependency: bool = False
+    has_unverified_claims: bool = False
+    verified_evidence_summary: Optional[str] = None
+    missing_evidence_summary: Optional[str] = None
+    derived_distance_km: Optional[float] = None
+    rebuilt_scores: Optional[Dict[str, Any]] = None
+    
     stage_status: str
     stage_history: Optional[List[Dict[str, Any]]] = []
     shortlist_status: str

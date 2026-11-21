@@ -1,246 +1,159 @@
 # PRANA: Opportunity Assessment Report
 ## Evidence-Backed Engineering Prioritisation for Kolkata–Howrah
-**Platform:** PRANA Research Hub (Milestone 4: Opportunity Discovery & Engineering Prioritisation)  
+**Platform:** PRANA Research Hub (Milestone 5: Evidence Integrity & Opportunity Recalibration)  
 **Date:** 2026-11-21  
 **Geographic Domain:** Kolkata–Howrah Metropolitan Airshed, West Bengal, India  
-**Scientific Standard:** Grounded in Statutory Telemetry, Peer-Reviewed Source Apportionment, and Transparent Heuristic Scoring
+**Scientific Standard:** Grounded in Statutory Telemetry, Verifiable Peer-Reviewed Research, Forensic Claim Auditing, and Zero-Credit Evidence Integrity  
 
 ---
 
 ## Executive Summary
 
-PRANA has established an evidence-driven opportunity discovery system to identify scientifically defensible outdoor air pollution reduction projects across Kolkata–Howrah. Grounded in over **10,900 ambient and meteorological records**, 9 statutory Continuous Ambient Air Quality Monitoring (CAAQM) stations (`site_5002`–`site_5010`), and foundational source apportionment studies (**TERI 2025** and **CSIR-NEERI 2020**), 4 candidate engineering opportunities were evaluated across 8 transparent scientific criteria:
+PRANA has recalibrated its evidence-driven opportunity discovery system following a comprehensive Milestone 5 forensic audit. Under the Milestone 5 **Zero-Credit Rule**, no candidate opportunity can receive an inflated evidence score based on unsupported narrative claims, synthetic test records, or unfulfilled citations. 
+
+Grounded in over **10,900 ambient and meteorological records**, 9 statutory Continuous Ambient Air Quality Monitoring (CAAQM) stations (`site_5002`–`site_5010`), and foundational source apportionment studies (**TERI 2025** and **CSIR-NEERI 2020**), all candidate opportunities were audited claim-by-claim and re-evaluated across 6 separated engineering dimensions alongside transparent multi-criteria decision heuristics:
 
 ```
-┌────────────────────────────────────────────────────────────────────────────────────────────────────────┐
-│                                 CANDIDATE RANKING SUMMARY (DEFAULT WEIGHTS)                            │
-├──────┬────────────────────────────────────────────┬─────────────────────────────┬───────┬──────────────┤
-│ Rank │ Candidate Opportunity                      │ Sector                      │ Score │ Status       │
-├──────┼────────────────────────────────────────────┼─────────────────────────────┼───────┼──────────────┤
-│ #1   │ Optical & Thermal Fence-Line Network       │ Low-Cost Monitoring/Enforce │ 8.44  │ SHORTLISTED  │
-│ #2   │ Howrah Foundry Cupola Multi-Cyclone Retro  │ Industrial Emissions        │ 8.33  │ SHORTLISTED  │
-│ #3   │ Landfill Autonomous Thermal Suppression    │ Waste Burning               │ 8.21  │ SHORTLISTED  │
-│ #4   │ Hooghly River Ferry Exhaust Aftertreatment │ River Transport             │ 7.55  │ INVESTIGATING│
-└──────┴────────────────────────────────────────────┴─────────────────────────────┴───────┴──────────────┘
+┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│                                   RECALIBRATED CANDIDATE RANKING SUMMARY (MILESTONE 5)                                │
+├──────┬────────────────────────────────────────────┬─────────────────────────────┬──────────────┬──────────────┬───────┤
+│ Rank │ Candidate Opportunity                      │ Sector                      │ Audited Evid │ Priority Scr │ Status│
+├──────┼────────────────────────────────────────────┼─────────────────────────────┼──────────────┼──────────────┼───────┤
+│ #1   │ Howrah Foundry Cupola Multi-Cyclone Retro  │ Industrial Emissions        │ 6.8 (was 9.5)│ 7.93 (was 8.3) SHORTLIST│
+│ #2   │ Optical & Thermal Fence-Line Network       │ Low-Cost Monitoring/Enforce │ 3.5 (was 8.8)│ 7.64 (was 8.4) SHORTLIST│
+│ #3   │ Landfill Autonomous Thermal Suppression    │ Waste Burning               │ 4.2 (was 8.5)│ 7.57 (was 8.2) SHORTLIST│
+│ #4   │ Hooghly River Ferry Exhaust Aftertreatment │ River Transport             │ 2.0 (was 6.8)│ 6.83 (was 7.5) INVESTIG│
+└──────┴────────────────────────────────────────────┴─────────────────────────────┴──────────────┴──────────────┴───────┘
 ```
+
+### Key Milestone 5 Audit Inversion
+* **Rank #1 Inversion**: The **Howrah Foundry Cupola Retrofit** rightfully ripens into **Rank #1** because its core problem is backed by authentic, statutory peer-reviewed chemical mass balance receptor modeling (**CSIR-NEERI 2020 Table 6.14**, establishing that industrial emissions drive **34% of winter $\text{PM}_{2.5}$ in Ghusuri**) and continuous exceedance telemetry at CPCB station `site_5008`.
+* **Jalan Candidate Recalibration**: The **Optical & Thermal Fence-Line Network** previously held an inflated evidence score of 8.8 based on narrative claims (2,000+ units, unverified nocturnal spikes, uningested VIIRS data). Its score was strictly recalibrated down to **3.5 / 10** based solely on authentic verified coordinates proving an unmonitored **8.56 km spatial void**. It shifts to **Rank #2** (Priority Score: 7.64 / 10).
 
 ### Core Recommendation for First Student-Led Engineering Project
-* **Top Recommended Project:** **Optical & Thermal Fence-Line Micro-Plume Attribution Network** (`industrial-fence-line-attribution`).
-* **Why it is preferable to the alternatives:**
-  1. **Directly Resolves the Airshed's #1 Critical Research Gap (`GAP-001`)**: Fills the unmonitored **7.2 km regulatory void** over the Jalan Industrial Complex (2,000+ unmonitored manufacturing units).
-  2. **Defensible, Low-Risk Prototype Resource Requirements**: Prototype node Bill of Materials is approximately **INR 85,000–1,10,000** (using calibrated optical particle counters, ultrasonic anemometers, and LoRaWAN), compared to **INR 12–18 Lakhs** for an industrial cupola baghouse or **INR 6–8 Lakhs** for heavy pneumatic landfill suppression rigs.
-  3. **High Scientific & Educational Feasibility for Students**: Students can build, calibrate, and collocate nodes on an academic campus against reference CAAQM monitors (e.g. at Rabindra Bharati University or Ghusuri) without the severe physical hazards of entering high-temperature ($350^\circ\text{C}\text{--}800^\circ\text{C}$) artisanal foundry sheds or toxic, corrosive landfill mounds.
-  4. **Immediate Deterrence & Enforcement Value**: Provides continuous real-time telemetry to the West Bengal Pollution Control Board (WBPCB) Surveillance Division to identify unpermitted night-time industrial discharges.
-  5. **100% Feasible Remote Pre-Pilot Investigation**: Baseline industrial plume signatures can be analyzed remotely using open satellite data (**Sentinel-5P TROPOMI $\text{NO}_2$** and **MODIS/VIIRS AOD**) before deploying physical hardware.
+* **Top Recommended Student Project:** **Optical & Thermal Fence-Line Micro-Plume Attribution Network** (`industrial-fence-line-attribution`).
+* **Why it is preferable to the alternatives despite lower evidence score:**
+  1. **Its Explicit Mission is to Resolve the Airshed's Evidence Void (`GAP-001`)**: The very reason its evidence score is 3.5 is the severe lack of local ground monitoring. Deploying this network directly creates the missing empirical dataset over the **8.56 km unmonitored regulatory void** between the Jalan industrial centroid and Padmapukur station.
+  2. **Defensible, Low-Risk Prototype Resource Requirements**: Prototype node Bill of Materials is approximately **INR 85,000–1,10,000** (using calibrated optical particle counters, ultrasonic anemometers, and LoRaWAN), compared to **INR 12–18 Lakhs** for an industrial cupola baghouse or **INR 6.5–8.5 Lakhs** for heavy pneumatic landfill suppression rigs.
+  3. **High Scientific & Student Physical Safety**: Students can assemble, calibrate, and collocate nodes on an academic campus (e.g. Rabindra Bharati University or Ghusuri CAAQM) without the extreme physical hazards of entering active artisanal foundry sheds ($350^\circ\text{C}\text{--}800^\circ\text{C}$ molten metal, toxic furnace gas) or unstable, biologically hazardous landfill mounds.
+  4. **Immediate Regulatory Deterrence & Enforcement Value**: Delivers automated, real-time plume triangulation vectors to the West Bengal Pollution Control Board (WBPCB) Surveillance Division to identify unpermitted night-time industrial discharges.
+  5. **100% Feasible Remote Pre-Pilot Investigation**: Open satellite data (**Sentinel-5P TROPOMI $\text{NO}_2$**) and ERA5 wind vectors can establish baseline dispersion trajectories prior to deploying physical field hardware.
 
 ---
 
-## 1. Candidate Opportunity Profiles
+## 1. Candidate Opportunity Profiles & Forensic Audit
 
-Each candidate was evaluated using PRANA's multi-criteria evaluation engine across 8 criteria: *Pollution Impact (0.20)*, *Evidence Strength (0.15)*, *Technical Feasibility (0.15)*, *Financial Feasibility (0.10)*, *Verification Credibility (0.15)*, *Scalability (0.10)*, *Innovation & IP (0.05)*, and *Partnership Feasibility (0.10)*.
-
-> [!NOTE]
-> **Scoring Heuristic Notice:** The Weighted Priority Score (scale 1.0 to 10.0) is a decision-support heuristic to guide engineering prioritisation. It is not an empirical physical measurement of ambient particulate concentration.
-
----
-
-### Rank #1: Optical & Thermal Fence-Line Micro-Plume Attribution Network
-* **Candidate Identifier:** `industrial-fence-line-attribution`
-* **Sector:** Low-cost emission monitoring and verification
-* **Weighted Priority Score:** **8.44 / 10** | **Shortlist Decision:** **SHORTLISTED**
-* **Stage Status:** `Feasibility assessed`
-
-#### 1. Problem Statement
-The Jalan Industrial Complex (Sankrail/Domjur, Howrah) spans several square kilometers and houses over 2,000 metallurgical foundries, rerolling mills, and chemical processing units. However, it operates completely outside the statutory CAAQM network (the nearest official monitoring station, Padmapukur `site_5009`, is 7.2 km away). Discontinuous nocturnal emissions escape regulatory oversight, while downwind residential communities experience toxic particulate and VOC pulses under calm winter wind regimes.
-
-#### 2. Target Pollutants & Suspected Emission Sources
-* **Target Pollutants:** Fine Particulate Matter ($\text{PM}_{2.5}$), Coarse Dust ($\text{PM}_{10}$), Black Carbon, Volatile Organic Compounds (VOCs).
-* **Suspected Sources:** Unpermitted nocturnal cupola melting, open scrap burning, fugitive sand handling, and clandestine small-boiler coal combustion in unmonitored industrial estates.
-
-#### 3. Geographic Relevance to Kolkata–Howrah
-Located along the NH-6 / Bombay Road corridor in Howrah ($22.59^\circ\text{N}, 88.24^\circ\text{E}$). The corridor lies directly upwind of central Howrah and Kolkata during prevailing west-northwesterly winter winds.
-
-#### 4. Supporting Research & Datasets
-* **PRANA Station Verification Dossier:** Documents Jalan/Domjur as a confirmed **Critical Geographic Void** ($>7\text{ km}$ from statutory monitoring).
-* **CPCB Statutory Telemetry:** Padmapukur station (`site_5009`) historical records reveal sharp, unmodeled midnight-to-dawn $\text{PM}_{2.5}$ spikes ($>180\,\mu\text{g/m}^3$) under calm ($<1.5\text{ m/s}$) north-westerly wind conditions.
-* **NASA VIIRS Nighttime Radiance:** Identifies dense localized night combustion signatures along the NH-6 industrial strip.
-
-#### 5. Evidence Strength & Confidence
-* **Score:** **8.8 / 10** | **Confidence:** **HIGH**
-* Ground truth is supported by official statutory station coordinates and verified meteorological correlation.
-
-#### 6. Proposed Engineering Solution
-A perimeter fence-line network of solar-powered edge monitoring nodes:
-- Calibrated dual-wavelength optical particulate counters (laser nephelometry with dynamic heated-inlet de-humidification to prevent high-humidity aerosol growth errors).
-- 2D ultrasonic solid-state anemometers (measuring horizontal wind vector at 1 Hz).
-- Low-power long-wave infrared (LWIR) micro-bolometer optical core for thermal plume boundary detection.
-- On-node microcontroller running edge triangulation algorithms (bilinear plume back-projection and Gaussian puff inversion) transmitting via LoRaWAN / cellular uplink.
-
-#### 7. Estimated Technical Complexity
-* **Complexity Level:** **Medium**
-* Integrates mature optical sensing and standard atmospheric dispersion physics. Low-power heated inlet control is the primary hardware engineering challenge.
-
-#### 8. Approximate Prototype Resource Requirements (Defensible BOM)
-* **Single Prototype Node BOM Estimate:** **INR 85,000 – 1,10,000 (~$1,000 – $1,300 USD)**
-  - Calibrated optical particle counter with heated inlet: INR 45,000
-  - 2D ultrasonic anemometer: INR 25,000
-  - Microcontroller (ESP32-S3) + LoRaWAN / 4G gateway: INR 10,000
-  - Solar panel (30W) + 12V LiFePO4 battery pack (18Ah) + MPPT charger: INR 12,000
-  - IP67 weatherproof pole-mount housing & cables: INR 6,000
-* *Capital Comparison:* Less than **1% of the cost of a statutory CAAQM station** (~INR 1.5 Crore).
-
-#### 9. Impact Measurement & Verification
-- Collocation calibration against the CPCB reference BAM/TEOM analyzer at Ghusuri (`site_5008`) for 30 days ($R^2 \ge 0.85$ requirement).
-- Controlled, non-toxic tracer smoke releases at known distances to measure angular triangulation accuracy.
-- Documented reduction in unpermitted nocturnal smoke episodes verified by downwind Padmapukur station trends.
-
-#### 10. Main Scientific & Implementation Risks
-- **Optical Sensor Drift:** Dense winter morning relative humidity ($>85\%\text{ RH}$) in Kolkata triggers hygroscopic aerosol swelling, overestimating $\text{PM}_{2.5}$ without dynamic heating.
-- **Physical Security:** Tampering, vandalism, or power theft in unmonitored peri-urban industrial corridors.
-- **Cellular Connectivity:** Periodic blind spots along industrial access roads requiring LoRa mesh topology.
-
-#### 11. Remote Pre-Pilot Investigation Capabilities
-- Extract **Sentinel-5P TROPOMI tropospheric $\text{NO}_2$ column density** time series over Jalan Complex ($22.59^\circ\text{N}, 88.24^\circ\text{E}$) to establish seasonal baseline industrial emission intensity.
-- Analyze **MODIS/VIIRS 375m active fire/thermal anomaly** records for night-time combustion detections.
-- Process **ERA5 reanalysis boundary layer wind vectors** to map statistical downwind dispersion trajectories across residential Howrah.
+Each candidate was evaluated across 6 separated engineering dimensions:
+1. *Pollution Impact Potential*
+2. *Evidence Strength (Audited)*
+3. *Engineering Feasibility*
+4. *Prototype Affordability*
+5. *Measurement & Verification (M&V) Feasibility*
+6. *Partnership Feasibility*
 
 ---
 
-### Rank #2: Howrah Foundry Cupola Multi-Cyclone & Dry Sorbent Off-Gas Scrubbing Retrofit
+### Rank #1: Howrah Foundry Cupola Multi-Cyclone & Dry Sorbent Off-Gas Scrubbing Retrofit
 * **Candidate Identifier:** `howrah-foundry-cupola-retrofit`
 * **Sector:** Industrial emissions (Metallurgical casting foundries)
-* **Weighted Priority Score:** **8.33 / 10** | **Shortlist Decision:** **SHORTLISTED**
-* **Stage Status:** `Evidence reviewed`
+* **Audited Evidence Score:** **6.8 / 10** *(Pre-Audit: 9.5)* | **Weighted Priority Score:** **7.93 / 10** *(Pre-Audit: 8.33)*
+* **Shortlist Decision:** **SHORTLISTED** | **Stage Status:** `Evidence reviewed`
 
-#### 1. Problem Statement
-Howrah is one of India's oldest metallurgical foundry hubs. Over 350 artisanal casting foundries and rolling mills in Ghusuri, Liluah, and Belur operate small coke-fired cold blast cupolas. These furnaces exhaust low-stack, unscrubbed flue gas containing dense toxic flyash, fine particulate matter, and acidic sulfur dioxide directly into the nocturnal boundary layer. Ghusuri CAAQM (`site_5008`) consistently records the highest particulate concentrations in West Bengal ($>220\,\mu\text{g/m}^3$ winter $\text{PM}_{2.5}$ mean).
+#### Rebuilt 6-Dimension Evaluation Matrix:
+* Pollution Impact Potential: **9.2 / 10**
+* Audited Evidence Strength: **6.8 / 10**
+* Engineering Feasibility: **7.0 / 10**
+* Prototype Affordability: **6.5 / 10**
+* Measurement & Verification Feasibility: **8.8 / 10**
+* Partnership Feasibility: **8.2 / 10**
 
-#### 2. Target Pollutants & Suspected Emission Sources
-* **Target Pollutants:** Fine Particulate Matter ($\text{PM}_{2.5}$), $\text{PM}_{10}$, Sulfur Dioxide ($\text{SO}_2$), Toxic Heavy Metals (Lead $\text{Pb}$, Iron $\text{Fe}$, Zinc $\text{Zn}$, Manganese $\text{Mn}$).
-* **Suspected Sources:** Coke combustion, scrap metal melting, and limestone fluxing in low-height cold blast cupola stacks (~15–20 m).
+#### Claim-by-Claim Forensic Evidence Audit Trail:
+1. `Industrial sector contributes 34% of winter PM2.5 in Ghusuri`: **`PUBLISHED_RESEARCH`** [DIRECT SUPPORT]. Citation: *CSIR-NEERI (2020) Table 6.14, p. 148*. Direct chemical mass balance receptor modeling result for Howrah North.
+2. `Ghusuri statutory CAAQM station (site_5008) records highest regional PM2.5`: **`VERIFIED_OBSERVATION`** [DIRECT SUPPORT]. Citation: *CPCB site_5008 statutory monitoring registry*. Verified coordinates ($22.6074^\circ\text{N}, 88.3496^\circ\text{E}$) and multi-year statutory exceedance.
+3. `WBPCB 2022 Foundry Cluster Environmental Audit`: **`MISSING_EVIDENCE`** [UNFULFILLED CITATION - 0 Cr]. Citation: Unfulfilled document citation. The 2022 survey document is not cataloged in PRANA `research_documents`.
+4. `~350 artisanal coke-fired cold blast cupolas operating in Ghusuri/Liluah`: **`UNVERIFIED_HYPOTHESIS`** [UNVERIFIED NARRATIVE - 0 Cr]. Citation: Unreferenced narrative text. No official factory registration register exists in DB.
 
-#### 3. Geographic Relevance to Kolkata–Howrah
-Concentrated in northern Howrah: Ghusuri ($22.60^\circ\text{N}, 88.34^\circ\text{E}$), Liluah, and Belur.
+#### Proposed Solution & Prototype Resource Requirements:
+* **Proposed Engineering Mechanism:** Semi-dry flue gas cleaning package: cyclonic pre-separator ($>10\,\mu\text{m}$ coarse grit knockout), pneumatic dry sorbent duct injection ($\text{Ca(OH)}_2$ hydrated lime for $\text{SO}_2$ neutralization), and high-temperature PTFE-coated ceramic baghouse rated to $260^\circ\text{C}$ with automated pulse-jet reverse cleaning.
+* **Prototype BOM Estimate:** **INR 12,00,000 – 18,00,000 (~$14,500 – $22,000 USD)** per foundry. Requires MSME technology upgrade subsidies or industry association co-financing.
+* **Verification Protocol:** Pre- and post-retrofit isokinetic stack sampling per **EPA Method 5 / Method 17**.
 
-#### 4. Supporting Research & Datasets
-* **CSIR-NEERI (2020) Twin Cities Final Report (Table 6.14, p. 148):** Establishes that the industrial sector contributes **34% of winter $\text{PM}_{2.5}$ in Ghusuri**.
-* **CPCB Statutory Registry (Site ID: `site_5008`):** Multi-year statutory telemetry confirming severe winter NAAQS 24-hr exceedances ($>350\%$ of standard).
-* **WBPCB 2022 Technical Audit:** Detailed survey of Howrah cupola dimensions, blast rates, and fuel consumption.
+---
 
-#### 5. Evidence Strength & Confidence
-* **Score:** **9.5 / 10** | **Confidence:** **HIGHEST**
-* Backed by statutory chemical mass balance receptor modeling and official CAAQM monitoring.
+### Rank #2: Optical & Thermal Fence-Line Micro-Plume Attribution Network
+* **Candidate Identifier:** `industrial-fence-line-attribution`
+* **Sector:** Low-cost emission monitoring and verification
+* **Audited Evidence Score:** **3.5 / 10** *(Pre-Audit: 8.8)* | **Weighted Priority Score:** **7.64 / 10** *(Pre-Audit: 8.44)*
+* **Shortlist Decision:** **SHORTLISTED** | **Stage Status:** `Feasibility assessed`
 
-#### 6. Proposed Engineering Solution
-A modular semi-dry flue gas cleaning package designed for tight artisanal shed footprints:
-1. High-efficiency cyclonic pre-separator to knock out coarse abrasive grit ($>10\,\mu\text{m}$).
-2. Pneumatic dry sorbent duct injection ($\text{Ca(OH)}_2$ hydrated lime powder) to neutralize acid $\text{SO}_2$ gases.
-3. High-temperature PTFE-coated ceramic baghouse filter cartridge rated to $260^\circ\text{C}$ with pulse-jet compressed air reverse cleaning, achieving $>98\%$ particulate capture.
-4. Variable-frequency induced draft (ID) centrifugal fan with automated draft balance dampers.
+#### Rebuilt 6-Dimension Evaluation Matrix:
+* Pollution Impact Potential: **7.2 / 10**
+* Audited Evidence Strength: **3.5 / 10**
+* Engineering Feasibility: **8.5 / 10**
+* Prototype Affordability: **8.7 / 10**
+* Measurement & Verification Feasibility: **9.2 / 10**
+* Partnership Feasibility: **8.5 / 10**
 
-#### 7. Estimated Technical Complexity
-* **Complexity Level:** **High**
-* Handling wide thermal swings ($350^\circ\text{C}$ melting blast up to $800^\circ\text{C}$ burndown) and tight footprint integration inside century-old sheds requires sophisticated thermal decoupling.
+#### Claim-by-Claim Forensic Evidence Audit Trail:
+1. `2,000+ industrial units in Jalan Industrial Complex`: **`UNVERIFIED_HYPOTHESIS`** [UNVERIFIED NARRATIVE - 0 Cr]. Citation: Unreferenced narrative text. Removed from problem statement; no official industrial park register exists in DB.
+2. `Monitoring gap to nearest statutory station`: **`DERIVED_RESULT`** [DIRECT SUPPORT]. Citation: *Padmapukur site_5010 statutory coordinates ($22.5632^\circ\text{N}, 88.3182^\circ\text{E}$)*. Exact Haversine geodesic distance from Jalan centroid ($22.59^\circ\text{N}, 88.24^\circ\text{E}$) to Padmapukur is **8.56 km** (corrected from earlier 7.2 km estimate). Both endpoint coordinates are verified ground truth.
+3. `Padmapukur station displays sharp nocturnal PM2.5 spikes > 180 µg/m³`: **`SYNTHETIC_DATA`** [NOT FOUND IN RAW DATA - 0 Cr]. Citation: *validated_observations (station_id 9)*. Forensic DB query proved zero midnight-to-dawn observations $>180\,\mu\text{g/m}^3$ exist. The only two readings $>180\,\mu\text{g/m}^3$ occurred at midday (12:00 PM and 1:00 PM on 2026-11-19) and are synthetic `DEMO` records.
+4. `Nocturnal spikes associated with calm north-westerly wind regimes`: **`UNVERIFIED_HYPOTHESIS`** [UNTESTED HYPOTHESIS - 0 Cr]. Citation: *Open-Meteo reanalysis weather records*. Synoptic NW reanalysis weather exists in DB, but the causal correlation to Padmapukur concentrations is an unlinked, untested hypothesis.
+5. `Satellite VIIRS day/night band radiance anomalies`: **`MISSING_EVIDENCE`** [UNFULFILLED CITATION - 0 Cr]. Citation: Unfulfilled satellite citation. Zero NASA VIIRS radiance values, fire vectors, or satellite files currently exist in PRANA.
 
-#### 8. Approximate Prototype Resource Requirements (Defensible BOM)
-* **Single Foundry Pilot Rig Estimate:** **INR 12,00,000 – 18,00,000 (~$14,500 – $22,000 USD)**
-  - Multi-cyclone separator + ceramic baghouse (48 bags): INR 6,50,000
-  - High-temperature centrifugal ID fan (15 kW) + VFD: INR 2,20,000
-  - Dry sorbent volumetric feeder + pneumatic blower: INR 1,80,000
-  - Thermocouples, differential pressure sensors, bypass damper: INR 1,50,000
-  - Structural fabrication, ducting, and foundation: INR 3,00,000
-* *Note:* Requires MSME technology upgrade subsidies or industry association co-financing.
-
-#### 9. Impact Measurement & Verification
-- Pre- and post-retrofit isokinetic stack sampling per **EPA Method 5 / Method 17** (unambiguous, non-counterfactual mass reduction proof).
-- Boundary fence-line optical particle counter continuous baseline comparison.
-
-#### 10. Main Scientific & Implementation Risks
-- **Thermal Decoupling Failure:** Flue gas temperature burndown spikes ($>600^\circ\text{C}$) blinding or destroying ceramic filter bags.
-- **Draft Disruption:** Induced draft fan backpressure disrupting natural cupola draft kinetics, causing molten metal chill and operator resistance.
-- **Toxic Waste Disposal:** Safe handling and statutory disposal of hazardous heavy metal-laden dry flyash residue.
-
-#### 11. Remote Pre-Pilot Investigation Capabilities
-- Cross-reference **Sentinel-5P tropospheric $\text{SO}_2$ columns** over Howrah North during peak winter operating cycles.
-- Map foundry shed footprints and stack roof clearance using high-resolution Google Earth / satellite imagery.
-- Model cupola blast thermals using public thermodynamic combustion simulation libraries (Cantera / OpenFOAM).
+#### Proposed Solution & Prototype Resource Requirements:
+* **Proposed Engineering Mechanism:** Perimeter fence-line network of solar-powered edge monitoring nodes with calibrated dual-wavelength optical particulate counters (laser nephelometry with dynamic heated-inlet de-humidification), 2D ultrasonic solid-state anemometers (1 Hz horizontal wind vector), and edge microcontrollers executing Gaussian puff back-projection triangulation algorithms via LoRaWAN / cellular uplink.
+* **Prototype BOM Estimate:** **INR 85,000 – 1,10,000 (~$1,000 – $1,300 USD)** per node.
+* **Verification Protocol:** 30-day collocation calibration against CPCB reference BAM/TEOM analyzer at Ghusuri (`site_5008`) or RBU (`site_5004`) requiring $R^2 \ge 0.85$, followed by controlled, non-toxic tracer smoke releases.
 
 ---
 
 ### Rank #3: Autonomous Thermal Edge-Detection & Rapid-Suppression for Landfill Refuse Fires
 * **Candidate Identifier:** `landfill-fire-thermal-suppression`
 * **Sector:** Waste burning
-* **Weighted Priority Score:** **8.21 / 10** | **Shortlist Decision:** **SHORTLISTED**
-* **Stage Status:** `Under research`
+* **Audited Evidence Score:** **4.2 / 10** *(Pre-Audit: 8.5)* | **Weighted Priority Score:** **7.57 / 10** *(Pre-Audit: 8.21)*
+* **Shortlist Decision:** **SHORTLISTED** | **Stage Status:** `Under research`
 
-#### 1. Problem Statement
-The Dhapa Municipal Landfill (East Kolkata) receives over 4,000 tonnes of municipal solid waste daily across 50 hectares. Deep anaerobic decomposition generates trapped methane pockets that trigger persistent, smoldering subterranean fires. These fires release massive episodic plumes of black carbon, carbon monoxide, and toxic dioxins/furans directly over East Kolkata, Salt Lake, and the EM Bypass. Conventional fire response relies on surface water dousing, which fails to extinguish subsurface combustion and increases toxic steam and leachate runoff.
+#### Rebuilt 6-Dimension Evaluation Matrix:
+* Pollution Impact Potential: **8.0 / 10**
+* Audited Evidence Strength: **4.2 / 10**
+* Engineering Feasibility: **7.5 / 10**
+* Prototype Affordability: **7.0 / 10**
+* Measurement & Verification Feasibility: **8.0 / 10**
+* Partnership Feasibility: **7.5 / 10**
 
-#### 2. Target Pollutants & Suspected Emission Sources
-* **Target Pollutants:** Fine Particulate Matter ($\text{PM}_{2.5}$), Black Carbon, Carbon Monoxide ($\text{CO}$), Dioxins/Furans, Toxic VOCs.
-* **Suspected Sources:** Subsurface spontaneous combustion of uncompacted organic and plastic waste at Dhapa dump and Belgachia dump.
+#### Claim-by-Claim Forensic Evidence Audit Trail:
+1. `Municipal solid waste burning contributes 14% of winter PM2.5 regionally`: **`PUBLISHED_RESEARCH`** [AIRSHED CONTEXT]. Citation: *TERI (2025) Table 4.6, p. 87*. Regional airshed context for all open refuse and biomass burning across Kolkata, not isolated Dhapa measurements.
+2. `NASA VIIRS 375m thermal infrared fire detections over Dhapa dump`: **`MISSING_EVIDENCE`** [UNFULFILLED CITATION - 0 Cr]. Citation: Unfulfilled satellite citation. Zero raw VIIRS thermal anomaly vectors exist in DB.
+3. `Nocturnal CO spikes > 2.5 mg/m³ at downwind stations under easterly winds`: **`UNVERIFIED_HYPOTHESIS`** [UNLINKED DATASET - 0 Cr]. Citation: Statutory CAAQM CO telemetry. Station CO records exist, but causal attribution specifically to Dhapa smoldering is an unproven narrative link.
 
-#### 3. Geographic Relevance to Kolkata–Howrah
-Dhapa Municipal Dump, adjacent to the EM Bypass and East Kolkata Wetlands ($22.54^\circ\text{N}, 88.42^\circ\text{E}$).
-
-#### 4. Supporting Research & Datasets
-* **TERI (2025) Kolkata Source Apportionment Study (Table 4.6, p. 87):** Municipal solid waste burning contributes **14% of winter $\text{PM}_{2.5}$** regionally.
-* **NASA VIIRS Satellite Thermal Anomalies:** Frequent 375m thermal infrared fire detections over the Dhapa coordinates.
-* **Statutory Ground Telemetry:** Sharp nocturnal $\text{CO}$ spikes ($>2.5\,\text{mg/m}^3$) recorded at Ballygunge (`site_5003`) and Victoria Memorial (`site_5002`) under easterly wind regimes.
-
-#### 5. Evidence Strength & Confidence
-* **Score:** **8.5 / 10** | **Confidence:** **HIGH**
-* Backed by statutory source apportionment, satellite thermal anomalies, and municipal fire logs.
-
-#### 6. Proposed Engineering Solution
-An automated thermodynamic early-warning and suppression package:
-1. Mast-mounted radiometric long-wave infrared (LWIR) pan-tilt-zoom (PTZ) continuous scanning nodes with machine-vision thermal anomaly classification.
-2. Software detection of subsurface thermal buildup ($>65^\circ\text{C}$) days before open surface flaming.
-3. Rapid pneumatic injection probe deploying non-toxic compressed air foam (CAF) and high-surface-area bio-slurry directly into subterranean smoldering cavities.
-
-#### 7. Estimated Technical Complexity
-* **Complexity Level:** **Medium**
-* Thermal radiometric vision is mature; ruggedizing subterranean mechanical piercing probes for heterogeneous waste mounds is the primary challenge.
-
-#### 8. Approximate Prototype Resource Requirements (Defensible BOM)
-* **Prototype Rig Estimate:** **INR 6,50,000 – 8,50,000 (~$7,800 – $10,200 USD)**
-  - Dual radiometric thermal/optical PTZ camera: INR 3,80,000
-  - Edge compute vision box (NVIDIA Jetson Orin Nano) in IP67 enclosure: INR 85,000
-  - Pneumatic high-pressure slurry delivery pump + piercing lance: INR 1,60,000
-  - Solar power / battery backup and mast mounting: INR 75,000
-
-#### 9. Impact Measurement & Verification
-- Multi-temporal spaceborne thermal infrared band analysis (**NASA ECOSTRESS** / **Landsat-9 Band 10**) showing elimination of thermal hotspots.
-- Downwind continuous $\text{PM}_{2.5}$ and $\text{CO}$ telemetry at Science City / EM Bypass.
-
-#### 10. Main Scientific & Implementation Risks
-- **Corrosive Degradation:** Severe concentrations of hydrogen sulfide ($H_2S$) and acidic leachate vapors corroding optical lens coatings and electronic enclosures.
-- **Methane Co-Ignition:** Pneumatic lance insertion accidentally introducing atmospheric oxygen into an anaerobic methane pocket, triggering flash ignition.
-
-#### 11. Remote Pre-Pilot Investigation Capabilities
-- Query archived **NASA VIIRS / MODIS thermal anomaly vectors** at Dhapa coordinates ($22.54^\circ\text{N}, 88.42^\circ\text{E}$) over the past 3 years to establish seasonal fire frequency.
-- Process **Landsat-9 thermal infrared Band 10 (100m resolution)** to map historical subterranean isotherm migration patterns.
+#### Proposed Solution & Prototype Resource Requirements:
+* **Proposed Engineering Mechanism:** Automated thermodynamic early-warning package: mast-mounted radiometric long-wave infrared (LWIR) pan-tilt-zoom (PTZ) continuous scanning nodes detecting subsurface thermal buildup ($>65^\circ\text{C}$), paired with high-pressure pneumatic lances injecting compressed air foam (CAF) directly into subterranean smoldering voids.
+* **Prototype BOM Estimate:** **INR 6,50,000 – 8,50,000 (~$7,800 – $10,200 USD)** per rig.
 
 ---
 
-## 2. Candidates with Insufficient Evidence
-
-### Hooghly River Passenger Ferry Exhaust Aftertreatment Retrofit Kit
+### Rank #4: Hooghly River Passenger Ferry Exhaust Aftertreatment Retrofit Kit
 * **Candidate Identifier:** `hooghly-ferry-exhaust-retrofit`
 * **Sector:** River transport
-* **Weighted Priority Score:** **7.49 / 10**
-* **Shortlist Decision:** **FURTHER_INVESTIGATION** (Not approved for immediate hardware prototyping)
-* **Stage Status:** `Evidence reviewed`
+* **Audited Evidence Score:** **2.0 / 10** *(Pre-Audit: 6.8)* | **Weighted Priority Score:** **6.83 / 10** *(Pre-Audit: 7.49)*
+* **Shortlist Decision:** **FURTHER_INVESTIGATION** | **Stage Status:** `Evidence reviewed`
 
-#### Why Evidence is Currently Insufficient:
-1. **Absence in Statutory Source Apportionment Models:** Neither TERI (2025) nor CSIR-NEERI (2020) provides empirical tailpipe emission factors for the ~50 passenger ferries and diesel tugs operating across the Hooghly River. Its airshed-wide particulate mass contribution is uninventoried (estimated at $<4\%$).
-2. **Duty-Cycle Thermodynamic Uncertainty:** Inland passenger ferries idle extensively at covered terminal ghats (Howrah Ghat, Babughat, Fairlie Place) with low exhaust gas temperatures ($<180^\circ\text{C}$). Standard Diesel Particulate Filters (DPFs) require exhaust temperatures $>300^\circ\text{C}$ for passive soot oxidation. Without empirical exhaust duty-cycle logging, active electrical regeneration requirements cannot be reliably sized.
-3. **Regulatory Safety Barriers:** Retrofitting non-road marine mechanical engines requires compliance with Inland Waterways Authority of India (IWAI) and state maritime safety codes. Excessive exhaust backpressure risks voiding passenger vessel seaworthiness certifications.
-* **Required Resolution Before Prototyping:** Complete **`GAP-002`** by deploying remote AIS vessel operating tracking and dockside optical black carbon screening to establish empirical baseline emissions.
+#### Rebuilt 6-Dimension Evaluation Matrix:
+* Pollution Impact Potential: **5.5 / 10**
+* Audited Evidence Strength: **2.0 / 10**
+* Engineering Feasibility: **6.0 / 10**
+* Prototype Affordability: **7.5 / 10**
+* Measurement & Verification Feasibility: **6.5 / 10**
+* Partnership Feasibility: **6.0 / 10**
+
+#### Claim-by-Claim Forensic Evidence Audit Trail:
+1. `River marine craft emissions identified as uninventoried research deficit`: **`PUBLISHED_RESEARCH`** [GAP ACKNOWLEDGEMENT]. Citation: *TERI (2025) Section 3.4, p. 42*. Confirms omission in existing emission inventories, but provides no empirical mass fraction.
+2. `Passenger ferries contribute significant dockside human exposure`: **`UNVERIFIED_HYPOTHESIS`** [UNVERIFIED NARRATIVE - 0 Cr]. Citation: Unreferenced narrative text. Zero empirical tailpipe emission factors, duty-cycle temperature logs, or fuel sulfur assays exist in PRANA.
 
 ---
 
-## 3. Important Empirical Research Gaps
+## 2. Important Research Gaps & Remote Resolution Strategy
 
 PRANA's research gap detector identified **5 critical evidence deficits** in current Kolkata–Howrah air quality intelligence:
 
@@ -250,7 +163,7 @@ PRANA's research gap detector identified **5 critical evidence deficits** in cur
 ├─────────┬──────────┬──────────────────────────────────────────┬───────────────────────────────────┤
 │ Gap Code│ Severity │ Title & Affected Area                    │ Cheapest Credible Resolution      │
 ├─────────┼──────────┼──────────────────────────────────────────┼───────────────────────────────────┤
-│ GAP-001 │ CRITICAL │ Spatial Void in Jalan/Domjur Belt        │ Sentinel-5P NO2 + MODIS AOD Remote│
+│ GAP-001 │ CRITICAL │ 8.56 km Spatial Void in Jalan/Domjur Belt│ Sentinel-5P NO2 + MODIS AOD Remote│
 │ GAP-002 │ HIGH     │ Uninventoried Ferry Marine Diesel Fleet  │ Public Marine AIS Vessel Tracking │
 │ GAP-003 │ HIGH     │ Lack of Howrah Heavy Metal Speciation    │ Rooftop Quartz Filters + ED-XRF   │
 │ GAP-004 │ MEDIUM   │ Dhapa Subsurface Fire Isotherm Kinetics  │ Landsat-9 Band 10 & ECOSTRESS     │
@@ -258,8 +171,8 @@ PRANA's research gap detector identified **5 critical evidence deficits** in cur
 └─────────┴──────────┴──────────────────────────────────────────┴───────────────────────────────────┘
 ```
 
-1. **`GAP-001` (CRITICAL - Howrah South-West Industrial Spatial Void):** Over 2,000 industrial units in the Jalan–Sankrail corridor have zero continuous monitors within a 7.2 km radius.  
-   *Cheapest Resolution:* Extract Sentinel-5P TROPOMI $\text{NO}_2$ columns and MODIS AOD downscaled cross-validation (100% remote).
+1. **`GAP-001` (CRITICAL - Jalan–Sankrail Industrial Spatial Void):** The Jalan industrial corridor has an **8.56 km derived distance** to the nearest statutory CAAQM station (Padmapukur `site_5010`), leaving industrial emissions outside statutory ground networks.  
+   *Cheapest Resolution:* Extract Sentinel-5P TROPOMI $\text{NO}_2$ column densities and MODIS AOD downscaled cross-validation (100% remote).
 2. **`GAP-002` (HIGH - Uninventoried Marine Diesel Emissions):** Complete lack of local emission factors for the Hooghly river ferry fleet.  
    *Cheapest Resolution:* Correlate open Automated Identification System (AIS) vessel GPS tracks with dockside optical Aethalometer monitoring during peak commute hours.
 3. **`GAP-003` (HIGH - Absence of Heavy Metal Aerosol Speciation):** Statutory CAAQM stations record gross $\text{PM}_{2.5}$ mass but lack continuous toxic metal speciation ($\text{Pb}$, $\text{Zn}$, $\text{Cd}$, $\text{Mn}$).  
@@ -271,7 +184,7 @@ PRANA's research gap detector identified **5 critical evidence deficits** in cur
 
 ---
 
-## 4. Strongest Candidate for a First Student-Led Project
+## 3. Strongest Candidate for a First Student-Led Engineering Project
 
 ### Recommendation: Optical & Thermal Fence-Line Micro-Plume Attribution Network (`industrial-fence-line-attribution`)
 
@@ -281,7 +194,7 @@ flowchart LR
         A["Low Capex\n(~INR 85k-110k/node)"]
         B["High Campus Safety\n(Zero toxic furnace hazard)"]
         C["Academic Collocation\n(Calibrate at RBU / Ghusuri)"]
-        D["Direct Gap Resolution\n(Fills 7 km Jalan Void)"]
+        D["Direct Gap Resolution\n(Fills 8.56 km Jalan Void)"]
         E["Remote Verification\n(Sentinel-5P NO2 Baseline)"]
     end
     WhyFenceLine --> SUCCESS["Optimal First Student-Led Engineering Pilot"]
@@ -291,7 +204,7 @@ flowchart LR
 
 1. **Safety & Accessibility for Students:**
    - Deploying an industrial cupola retrofit requires working inside cramped, active foundry sheds operating at $350^\circ\text{C}\text{--}800^\circ\text{C}$ with molten iron, molten slag, and toxic heavy metal dust.
-   - Landfill suppression requires operating in unstable, toxic, and biologically hazardous refuse mounds with methane explosion risks.
+   - Landfill suppression requires operating in unstable, toxic, and biologically hazardous refuse mounds with methane flash ignition risks.
    - The fence-line monitoring network involves **non-hazardous electronic, optical, and firmware engineering** that can be safely prototyped in a university laboratory.
 
 2. **Capital Efficiency & Resource Defensibility:**
@@ -312,6 +225,6 @@ flowchart LR
 
 ---
 
-## 5. Conclusion
+## 4. Conclusion
 
-PRANA's completed Opportunity Explorer establishes an objective, evidence-driven pathway for clean-air engineering in Kolkata–Howrah. By eliminating speculative projects, cataloging unmonitored coverage voids, and prioritizing a low-cost, high-leverage sensing and attribution network as the first student-led engineering project, PRANA balances scientific rigor, student safety, and real-world pollution reduction impact.
+PRANA's completed Opportunity Explorer establishes an objective, evidence-driven pathway for clean-air engineering in Kolkata–Howrah. By enforcing Milestone 5's Zero-Credit Rule, PRANA eliminates speculative inflations and grounds all scientific claims in authentic, verifiable records. Prioritizing the low-cost, high-leverage sensing and attribution network as the first student-led engineering project balances scientific rigor, student safety, and real-world pollution reduction impact.

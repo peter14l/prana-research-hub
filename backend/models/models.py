@@ -376,6 +376,17 @@ class CandidateOpportunity(Base):
     innovation_score = Column(Float, nullable=False, default=7.0)
     partnership_feasibility_score = Column(Float, nullable=False, default=7.0)
 
+    # Milestone 5: Evidence Integrity & Recalibration
+    pre_audit_evidence_score = Column(Float, nullable=True)
+    pre_audit_priority_score = Column(Float, nullable=True)
+    evidence_audit_breakdown = Column(JSON, nullable=True) # Detailed claim-by-claim audit with classifications
+    has_synthetic_dependency = Column(Boolean, default=False)
+    has_unverified_claims = Column(Boolean, default=False)
+    verified_evidence_summary = Column(Text, nullable=True)
+    missing_evidence_summary = Column(Text, nullable=True)
+    derived_distance_km = Column(Float, nullable=True)
+    rebuilt_scores = Column(JSON, nullable=True) # 6 separate dimensions
+
     score_explanations = Column(JSON, nullable=True) # Criterion-level detailed rationales
 
     # Stage-Gate Lifecycle
