@@ -53,6 +53,10 @@ class MonitoringStation(Base):
     verification_source_url = Column(String(255), default="https://app.cpcbccr.com/ccr_docs")
     verified_parameters = Column(String(255), default="PM2.5, PM10, NO2, SO2, CO, O3, NH3")
     verification_notes = Column(Text, nullable=True)
+    
+    # Milestone 3: Automated Ingestion Mapping
+    openaq_location_id = Column(Integer, nullable=True)
+    last_observed_at = Column(DateTime, nullable=True)
 
     metadata_json = Column(JSON, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
@@ -73,6 +77,7 @@ class Sensor(Base):
     sensor_model = Column(String(100), nullable=True)
     sampling_interval = Column(String(30), default="1-hour")
     is_active = Column(Boolean, default=True)
+    openaq_sensor_id = Column(Integer, nullable=True)
 
     station = relationship("MonitoringStation", back_populates="sensors")
 
@@ -309,13 +314,32 @@ class IngestionLog(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     provider_id = Column(Integer, ForeignKey("data_providers.id"), nullable=True)
+    provider_code = Column(String(50), nullable=True)
     source_name = Column(String(100), nullable=False)
     started_at = Column(DateTime, default=datetime.utcnow)
     completed_at = Column(DateTime, nullable=True)
-    status = Column(String(30), default="PENDING") # SUCCESS, WARNING, FAILED
+    status = Column(String(30), default="PENDING") # SUCCESS, WARNING, FAILED, PARTIAL
     records_processed = Column(Integer, default=0)
     records_flagged = Column(Integer, default=0)
-    data_classification = Column(String(30), default="DEMO") # DEMO, IMPORTED, VERIFIED
+    data_classification = Column(String(30), default="DEMO") # DEMO, IMPORTED, VERIFIED, MODELLED
     message = Column(Text, nullable=True)
+    error_details = Column(Text, nullable=True)
 
     provider_rel = relationship("DataProvider", back_populates="ingestion_logs")
+
+class SavedAnalysis(Base):
+    __tablename__ = "saved_analyses"
+
+    id = Column(Integer, primary_key=True, index=True)
+    title = Column(String(200), nullable=False)
+    description = Column(Text, nullable=True)
+    author = Column(String(100), default="PRANA Environmental Researcher")
+    pollutant = Column(String(20), nullable=False) # e.g. "PM2.5"
+    station_ids = Column(JSON, nullable=False) # [1, 7]
+    date_range_start = Column(DateTime, nullable=True)
+    date_range_end = Column(DateTime, nullable=True)
+    met_variables = Column(JSON, nullable=True) # ["wind_speed", "temperature"]
+    methodology = Column(Text, nullable=True)
+    source_references = Column(Text, nullable=True)
+    analysis_results = Column(JSON, nullable=True) # Summary stats, correlations, linear regression slopes
+    created_at = Column(DateTime, default=datetime.utcnow)

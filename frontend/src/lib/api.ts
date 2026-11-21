@@ -1,5 +1,5 @@
 /**
- * PRANA Research Hub API Client (Milestone 2 - Data Provenance Aware)
+ * PRANA Research Hub API Client (Milestone 3 - Automated Ingestion & Environmental Analysis)
  */
 
 const API_BASE = '/api';
@@ -195,5 +195,117 @@ export async function askAssistant(query: string) {
     body: JSON.stringify({ query })
   });
   if (!res.ok) throw new Error('Failed to query assistant');
+  return res.json();
+}
+
+// ==============================================================================
+// Milestone 3 API Endpoints: Automated Ingestion & Environmental Analysis
+// ==============================================================================
+
+export async function triggerIngestionRefresh(providerCode?: string, forceHistorical = false, daysBack = 7) {
+  const res = await fetch(`${API_BASE}/ingestion/refresh`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      provider_code: providerCode,
+      force_historical: forceHistorical,
+      days_back: daysBack
+    })
+  });
+  if (!res.ok) throw new Error('Failed to trigger ingestion refresh');
+  return res.json();
+}
+
+export async function fetchIngestionStatuses() {
+  const res = await fetch(`${API_BASE}/ingestion/status`);
+  if (!res.ok) throw new Error('Failed to fetch ingestion statuses');
+  return res.json();
+}
+
+export async function fetchIngestionLogs(limit = 50) {
+  const res = await fetch(`${API_BASE}/ingestion/logs?limit=${limit}`);
+  if (!res.ok) throw new Error('Failed to fetch ingestion logs');
+  return res.json();
+}
+
+export async function importCPCBCCRCsv(file: File, classification = 'IMPORTED') {
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('classification', classification);
+
+  const res = await fetch(`${API_BASE}/ingestion/cpcb-ccr-csv`, {
+    method: 'POST',
+    body: formData
+  });
+  if (!res.ok) throw new Error('Failed to upload CPCB CCR CSV');
+  return res.json();
+}
+
+export async function importWBPCBCsv(file: File, classification = 'IMPORTED') {
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('classification', classification);
+
+  const res = await fetch(`${API_BASE}/ingestion/wbpcb-csv`, {
+    method: 'POST',
+    body: formData
+  });
+  if (!res.ok) throw new Error('Failed to upload WBPCB CSV');
+  return res.json();
+}
+
+export async function fetchAnalysisTemporal(pollutant = 'PM2.5', stationIds?: string, days = 7, classifications?: string) {
+  let url = `${API_BASE}/analysis/temporal?pollutant=${pollutant}&days=${days}`;
+  if (stationIds) url += `&station_ids=${encodeURIComponent(stationIds)}`;
+  if (classifications) url += `&classifications=${encodeURIComponent(classifications)}`;
+
+  const res = await fetch(url);
+  if (!res.ok) throw new Error('Failed to fetch temporal analysis');
+  return res.json();
+}
+
+export async function fetchAnalysisMeteorological(pollutant = 'PM2.5', city = 'Kolkata', days = 7) {
+  const res = await fetch(`${API_BASE}/analysis/meteorological?pollutant=${pollutant}&city=${encodeURIComponent(city)}&days=${days}`);
+  if (!res.ok) throw new Error('Failed to fetch meteorological analysis');
+  return res.json();
+}
+
+export async function fetchAnalysisHotspots(pollutant = 'PM2.5', hoursWindow = 168) {
+  const res = await fetch(`${API_BASE}/analysis/hotspots?pollutant=${pollutant}&hours_window=${hoursWindow}`);
+  if (!res.ok) throw new Error('Failed to fetch hotspot investigation');
+  return res.json();
+}
+
+export async function saveAnalysis(payload: {
+  title: string;
+  description?: string;
+  author?: string;
+  pollutant: string;
+  station_ids: number[];
+  date_range_start?: string;
+  date_range_end?: string;
+  met_variables?: string[];
+  methodology?: string;
+  source_references?: string;
+  analysis_results?: any;
+}) {
+  const res = await fetch(`${API_BASE}/analysis/workspace/save`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  });
+  if (!res.ok) throw new Error('Failed to save analysis');
+  return res.json();
+}
+
+export async function fetchSavedAnalyses() {
+  const res = await fetch(`${API_BASE}/analysis/workspace/list`);
+  if (!res.ok) throw new Error('Failed to fetch saved analyses');
+  return res.json();
+}
+
+export async function fetchSavedAnalysis(id: number) {
+  const res = await fetch(`${API_BASE}/analysis/workspace/${id}`);
+  if (!res.ok) throw new Error('Failed to fetch saved analysis');
   return res.json();
 }

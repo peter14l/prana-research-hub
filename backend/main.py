@@ -8,7 +8,7 @@ from backend.database import engine, Base
 from backend.routers import (
     overview, live_aq, explorer, hotspots, sources,
     weather, library, interventions, data_quality,
-    ai_assistant, export
+    ai_assistant, export, ingestion, analysis
 )
 from backend.seed.seed_data import seed_database
 
@@ -50,6 +50,8 @@ app.include_router(interventions.router, prefix=settings.API_V1_PREFIX)
 app.include_router(data_quality.router, prefix=settings.API_V1_PREFIX)
 app.include_router(ai_assistant.router, prefix=settings.API_V1_PREFIX)
 app.include_router(export.router, prefix=settings.API_V1_PREFIX)
+app.include_router(ingestion.router, prefix=settings.API_V1_PREFIX)
+app.include_router(analysis.router, prefix=settings.API_V1_PREFIX)
 
 @app.get("/")
 def health_check():

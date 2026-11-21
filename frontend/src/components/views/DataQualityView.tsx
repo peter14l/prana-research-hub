@@ -23,7 +23,10 @@ import {
   fetchQualityAudit,
   fetchStationVerificationRegistry,
   fetchSourcesReliability,
-  importCSV
+  importCSV,
+  triggerIngestionRefresh,
+  importCPCBCCRCsv,
+  importWBPCBCsv
 } from '@/lib/api';
 
 type TabType = 'audit' | 'stations' | 'sources' | 'ingestion';
@@ -39,11 +42,14 @@ export default function DataQualityView() {
 
   // Ingestion form state
   const [uploadFile, setUploadFile] = useState<File | null>(null);
+  const [ingestionFormat, setIngestionFormat] = useState<string>('PRANA_STANDARD'); // PRANA_STANDARD, CPCB_CCR, WBPCB_PORTAL
   const [providerCode, setProviderCode] = useState<string>('RESEARCH_FIELD_TEAM');
   const [classification, setClassification] = useState<string>('IMPORTED');
   const [uploadStatus, setUploadStatus] = useState<string>('');
   const [ingestionResult, setIngestionResult] = useState<any>(null);
   const [uploading, setUploading] = useState<boolean>(false);
+  const [refreshing, setRefreshing] = useState<boolean>(false);
+  const [refreshSummary, setRefreshSummary] = useState<string>('');
 
   useEffect(() => {
     loadAllQualityData();
@@ -67,6 +73,20 @@ export default function DataQualityView() {
     }
   }
 
+  async function handleTriggerRefresh() {
+    setRefreshing(true);
+    setRefreshSummary('');
+    try {
+      const res = await triggerIngestionRefresh();
+      setRefreshSummary('Automated sync completed: OpenAQ v3 & Open-Meteo updated successfully.');
+      loadAllQualityData();
+    } catch (err: any) {
+      setRefreshSummary(`Refresh error: ${err.message}`);
+    } finally {
+      setRefreshing(false);
+    }
+  }
+
   async function handleUpload(e: React.FormEvent) {
     e.preventDefault();
     if (!uploadFile) return;
@@ -74,14 +94,22 @@ export default function DataQualityView() {
     setUploadStatus('');
     setIngestionResult(null);
     try {
-      const res = await importCSV(uploadFile, providerCode, classification);
+      let res;
+      if (ingestionFormat === 'CPCB_CCR') {
+        res = await importCPCBCCRCsv(uploadFile, classification);
+        setUploadStatus(`CPCB CCR Ingested: ${res.observations_processed} pollutant readings & ${res.aqi_records_processed} official AQI records.`);
+      } else if (ingestionFormat === 'WBPCB_PORTAL') {
+        res = await importWBPCBCsv(uploadFile, classification);
+        setUploadStatus(`WBPCB Ingested: ${res.records_processed} observations (${res.records_flagged} flagged).`);
+      } else {
+        res = await importCSV(uploadFile, providerCode, classification);
+        setUploadStatus(`Successfully processed ${res.records_processed} records (${res.records_flagged} flagged). Assigned classification: ${res.classification}.`);
+      }
       setIngestionResult(res);
-      setUploadStatus(`Successfully processed ${res.records_processed} records (${res.records_flagged} flagged). Assigned classification: ${res.classification}.`);
       setUploadFile(null);
-      // Reload audit
       loadAllQualityData();
     } catch (err: any) {
-      setUploadStatus(`Ingestion failed: ${err.message || 'Please check CSV columns: station_code, pollutant, value, unit, timestamp'}`);
+      setUploadStatus(`Ingestion failed: ${err.message || 'Please check file format'}`);
     } finally {
       setUploading(false);
     }
@@ -105,15 +133,32 @@ export default function DataQualityView() {
               Suspicious readings are flagged with exact statistical rationales and preserved for audit, never silently discarded.
             </p>
           </div>
-          <button
-            onClick={loadAllQualityData}
-            disabled={loading}
-            className="flex items-center space-x-1.5 px-3 py-1.5 bg-[#141822] hover:bg-[#1D2433] border border-border rounded-lg text-xs text-gray-200 transition-colors cursor-pointer"
-          >
-            <RefreshCw className={`w-3.5 h-3.5 text-prana-yellow ${loading ? 'animate-spin' : ''}`} />
-            <span>Re-run Audit</span>
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handleTriggerRefresh}
+              disabled={refreshing}
+              className="flex items-center space-x-1.5 px-3 py-1.5 bg-[#182130] hover:bg-[#222F45] border border-prana-yellow/40 text-prana-yellow rounded-lg text-xs font-semibold transition-colors cursor-pointer"
+            >
+              <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? 'animate-spin' : ''}`} />
+              <span>{refreshing ? 'Polling Providers...' : 'Trigger Live Sync'}</span>
+            </button>
+
+            <button
+              onClick={loadAllQualityData}
+              disabled={loading}
+              className="flex items-center space-x-1.5 px-3 py-1.5 bg-[#141822] hover:bg-[#1D2433] border border-border rounded-lg text-xs text-gray-200 transition-colors cursor-pointer"
+            >
+              <RefreshCw className={`w-3.5 h-3.5 text-prana-sage ${loading ? 'animate-spin' : ''}`} />
+              <span>Re-run Audit</span>
+            </button>
+          </div>
         </div>
+
+        {refreshSummary && (
+          <div className="mt-3 p-2.5 rounded-lg bg-emerald-950/40 border border-emerald-500/40 text-emerald-300 text-xs">
+            {refreshSummary}
+          </div>
+        )}
 
         {/* Navigation Tabs */}
         <div className="flex items-center space-x-2 mt-5 border-t border-white/10 pt-4 text-xs">
@@ -578,7 +623,22 @@ export default function DataQualityView() {
             </div>
 
             <form onSubmit={handleUpload} className="space-y-4 pt-2">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+                <div>
+                  <label className="block text-[11px] font-semibold text-gray-400 mb-1">
+                    CSV Format Standard
+                  </label>
+                  <select
+                    value={ingestionFormat}
+                    onChange={(e) => setIngestionFormat(e.target.value)}
+                    className="w-full bg-[#141822] border border-border rounded-lg px-3 py-2 text-xs text-gray-200 outline-none font-semibold text-prana-yellow"
+                  >
+                    <option value="PRANA_STANDARD">PRANA Standard (Long Format)</option>
+                    <option value="CPCB_CCR">CPCB CCR Extract (Separates AQI &amp; Pollutants)</option>
+                    <option value="WBPCB_PORTAL">WBPCB Portal Extract (Wide/Long)</option>
+                  </select>
+                </div>
+
                 <div>
                   <label className="block text-[11px] font-semibold text-gray-400 mb-1">
                     Data Classification
@@ -615,7 +675,7 @@ export default function DataQualityView() {
                     type="file"
                     accept=".csv"
                     onChange={(e) => setUploadFile(e.target.files?.[0] || null)}
-                    className="w-full text-xs text-gray-300 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-[#181E29] file:text-prana-yellow hover:file:bg-[#222B3A] cursor-pointer"
+                    className="w-full text-xs text-gray-300 file:mr-2 file:py-1.5 file:px-2.5 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-[#181E29] file:text-prana-yellow hover:file:bg-[#222B3A] cursor-pointer"
                   />
                 </div>
               </div>

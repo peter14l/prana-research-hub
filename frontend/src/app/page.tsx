@@ -14,6 +14,7 @@ import SourceIntelligenceView from '@/components/views/SourceIntelligenceView';
 import WeatherView from '@/components/views/WeatherView';
 import ResearchLibraryView from '@/components/views/ResearchLibraryView';
 import InterventionLabView from '@/components/views/InterventionLabView';
+import AnalysisWorkspaceView from '@/components/views/AnalysisWorkspaceView';
 import DataQualityView from '@/components/views/DataQualityView';
 import SettingsView from '@/components/views/SettingsView';
 
@@ -67,6 +68,7 @@ export default function Home() {
     weather: 'Weather & Synoptic Atmospheric Dynamics',
     library: 'Statutory Research & Literature Library',
     interventions: 'Intervention Lab & Engineering Hypotheses',
+    workspace: 'Environmental Analysis & Research Workspace',
     data_quality: 'Data Provenance, Quality & Audit Trail',
     settings: 'Platform Configuration & Settings',
   };
@@ -133,6 +135,10 @@ export default function Home() {
 
           {activeSection === 'interventions' && (
             <InterventionLabView />
+          )}
+
+          {activeSection === 'workspace' && (
+            <AnalysisWorkspaceView />
           )}
 
           {activeSection === 'data_quality' && (

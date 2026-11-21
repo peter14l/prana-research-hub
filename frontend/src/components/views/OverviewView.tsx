@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Activity,
   AlertTriangle,
@@ -11,7 +11,11 @@ import {
   Layers,
   MapPin,
   TrendingUp,
-  Wind
+  Wind,
+  Server,
+  ShieldCheck,
+  Radio,
+  Info
 } from 'lucide-react';
 import {
   AreaChart,
@@ -23,6 +27,7 @@ import {
   CartesianGrid
 } from 'recharts';
 import MapLibreMap from '../map/MapLibreMap';
+import { fetchIngestionStatuses } from '@/lib/api';
 
 interface OverviewViewProps {
   summary: any;
@@ -41,6 +46,11 @@ export default function OverviewView({
 }: OverviewViewProps) {
   const [activePollutant, setActivePollutant] = useState<string>('PM2.5');
   const [selectedStation, setSelectedStation] = useState<any>(null);
+  const [ingestionStatuses, setIngestionStatuses] = useState<any[]>([]);
+
+  useEffect(() => {
+    fetchIngestionStatuses().then(setIngestionStatuses).catch(console.error);
+  }, []);
 
   const pollutants = ['PM2.5', 'PM10', 'NO2', 'SO2', 'CO', 'O3'];
 
@@ -62,6 +72,8 @@ export default function OverviewView({
     { label: 'O3 (Ozone)', key: 'o3_avg', unit: 'µg/m³', limit: '100 (8h std)', high: 80 },
   ];
 
+  const totalSensors = stations.reduce((acc, st) => acc + (st.sensors?.length || 6), 0);
+
   return (
     <div className="space-y-6">
       {/* Top Regional Status Bar */}
@@ -77,7 +89,7 @@ export default function OverviewView({
             Kolkata–Howrah Twin Cities Air Shed
           </h1>
           <p className="text-xs text-gray-400 mt-0.5">
-            Real-time telemetry aggregated across {summary?.reporting_stations ?? 9} statutory CAAQM stations.
+            Real-time telemetry aggregated across {summary?.reporting_stations ?? 9} statutory CAAQM stations ({totalSensors} active criteria sensors).
           </p>
         </div>
 
@@ -102,6 +114,47 @@ export default function OverviewView({
               {summary?.stale_stations ?? 0}
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* Milestone 3: Telemetry Providers & Freshness Cards */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        {ingestionStatuses.map((p) => {
+          const isConnected = p.connection_status === 'CONNECTED';
+          const isAuthReq = p.connection_status === 'AUTH_REQUIRED';
+          const isManual = p.connection_status === 'MANUAL_PORTAL_ONLY';
+
+          return (
+            <div key={p.provider_code} className="research-card p-3.5 space-y-1 text-xs">
+              <div className="flex items-center justify-between">
+                <span className="font-bold text-gray-200">{p.provider_code}</span>
+                <span className={`text-[9px] px-1.5 py-0.5 rounded font-mono font-bold border ${
+                  isConnected
+                    ? 'bg-emerald-950 text-emerald-400 border-emerald-600'
+                    : isAuthReq
+                    ? 'bg-amber-950 text-amber-400 border-amber-600'
+                    : 'bg-blue-950 text-blue-400 border-blue-600'
+                }`}>
+                  {p.connection_status}
+                </span>
+              </div>
+              <div className="text-[10px] text-gray-400 truncate" title={p.name}>{p.name}</div>
+              <div className="text-[10px] text-gray-500 font-mono pt-1 border-t border-white/5 flex justify-between">
+                <span>Last Sync:</span>
+                <span className="text-gray-300">
+                  {p.last_successful_fetch ? new Date(p.last_successful_fetch).toLocaleTimeString() : 'Manual'}
+                </span>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Modelled vs Observation Distinction Banner */}
+      <div className="p-3 bg-[#121620] rounded-xl border border-white/10 text-xs flex items-start gap-2.5">
+        <Info className="w-4 h-4 text-prana-yellow shrink-0 mt-0.5" />
+        <div className="text-[11px] text-gray-300 leading-relaxed">
+          <strong className="text-prana-yellow uppercase">Scientific Transparency Protocol:</strong> Ground pollutant measurements (PM2.5, PM10, NO2, SO2, CO, O3) are gathered from statutory CAAQM physical sensors. Synoptic weather dynamics (Wind Speed, Temperature, Relative Humidity, PBLH) are ingested from <span className="font-mono text-emerald-400">Open-Meteo High-Resolution Numerical Atmospheric Reanalysis</span> and are strictly classified as <span className="font-mono text-purple-400 font-bold">MODELLED</span>.
         </div>
       </div>
 
@@ -205,10 +258,10 @@ export default function OverviewView({
                 <p className="text-[11px] text-gray-400">Daily mean with diurnal min/max envelope</p>
               </div>
               <button
-                onClick={() => onNavigate('explorer')}
+                onClick={() => onNavigate('workspace')}
                 className="text-xs text-prana-yellow hover:underline flex items-center gap-0.5"
               >
-                Explorer <ChevronRight className="w-3.5 h-3.5" />
+                Workspace <ChevronRight className="w-3.5 h-3.5" />
               </button>
             </div>
 

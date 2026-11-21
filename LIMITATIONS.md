@@ -1,10 +1,11 @@
-# PRANA Research Hub: Scientific & Technical Limitations
+# PRANA Research Hub: Scientific Protocols, Boundaries & Technical Limitations
+## Updated for Milestone 3: Automated Data Collection & Environmental Analysis
 
-This document outlines the methodological boundaries, spatial coverage gaps, and engineering assumptions governing the **PRANA Research Hub** for the Kolkata–Howrah air shed.
+This document governs the scientific boundaries, institutional access realities, spatial coverage voids, and methodological protocols implemented across the **PRANA Research Hub** for the Kolkata–Howrah conurbation of West Bengal, India.
 
 ---
 
-## 1. Ambient Sensor Telemetry vs. Source Attribution
+### 1. Ambient Sensor Telemetry vs. Source Attribution
 
 * **Fundamental Rule**: Ambient particulate matter ($\text{PM}_{2.5}$ and $\text{PM}_{10}$) measured at ground monitoring stations represents a complex, thoroughly mixed atmospheric cocktail of multiple primary emissions and secondary chemical reaction products.
 * **Non-Attribution Boundary**: A sensor reading at a specific station (e.g., Victoria Memorial or Ghusuri) **does not identify the source responsible for that concentration**.
@@ -18,44 +19,66 @@ This document outlines the methodological boundaries, spatial coverage gaps, and
 
 ---
 
-## 2. Spatial Coverage Gaps & Prohibition of Spurious Interpolation
+### 2. External Provider Telemetry & Institutional Realities
 
-* **Monitoring Density**: Kolkata and Howrah operate 9 statutory Continuous Ambient Air Quality Monitoring (CAAQM) stations. While these provide high-fidelity temporal observations at specific points, spatial coverage is non-uniform.
-* **Identified Coverage Voids**:
-  * **South-West Kolkata & Port Area**: Khidirpur Dock System, Taratala, Behala, and Thakurpukur have **zero continuous ambient monitors within a 4–7 km radius**, despite heavy diesel port freight transit.
-  * **Howrah Rural/Inland Industrial Periphery**: Kona Expressway interior, Domjur, and outer Liluah lack continuous monitoring.
-  * **East Kolkata Wetlands Buffer**: Dhapa municipal landfill fires are monitored distantly from Bidhannagar and Ballygunge.
-* **PRANA Scientific Standard**: The platform **strictly refuses to interpolate or extrapolate ward-level pollution estimates** across these voids. When distance to the nearest station exceeds 3.5 km, the zone is explicitly classified as a **Coverage Gap with High Uncertainty**.
+#### 2.1 OpenAQ API v3 Authentication
+* **Status**: `CONNECTED` (Authenticated via `X-API-Key`)
+* **Coverage Scope**: OpenAQ aggregates statutory data from available public feeds. In the Kolkata–Howrah bounding box ($88.15^\circ\text{E}, 22.40^\circ\text{N}$ to $88.55^\circ\text{E}, 22.70^\circ\text{N}$), OpenAQ indexes 17 monitoring stations.
+* **Important Caveat**: OpenAQ coverage **does not equal 100% of official monitoring coverage**. Certain state and central stations experience delayed or intermittent indexing. A station appearing in OpenAQ does not automatically make it a verified statutory site without CPCB NCAP cross-referencing.
 
----
+#### 2.2 West Bengal Pollution Control Board (WBPCB)
+* **Status**: `MANUAL_PORTAL_ONLY`
+* **Limitation**: The state portal (`https://aqmsdata.wbpcb.gov.in/`) is a client-rendered application that **does not provide an unauthenticated public REST API**. Automated scraping of gated government web infrastructure is prohibited.
+* **Supported Access**: PRANA supports researcher-assisted CSV imports of official portal downloads with automated column mapping and SHA-256 cryptographic provenance hashing.
 
-## 3. National Air Quality Index (NAQI) Validity
-
-* **Statutory CPCB Protocols**: Official Indian National Air Quality Index values require:
-  1. At least 3 monitored parameters.
-  2. At least one parameter must be either $\text{PM}_{2.5}$ or $\text{PM}_{10}$.
-* **Transparent Fallback**: When a station experiences telemetry loss on particulate analyzers, the platform does not fabricate an AQI; it marks the status as **"Insufficient Data for Official AQI"** and presents the available sub-indices independently.
-
----
-
-## 4. Meteorological Coupling & Non-Causality
-
-* **Boundary Layer Dynamics**: During winter (December–February), nocturnal Planetary Boundary Layer Height (PBLH) collapses from $>1,500\text{ m}$ to $<400\text{ m}$ under calm conditions ($<7\text{ km/h}$). This traps pollutants regardless of whether local emissions increased.
-* **Wind Direction Caveat**: North-North-Westerly (NNW) wind flow aligns with the regional Indo-Gangetic Plain transport corridor. Wind direction pointing toward a monitor from a known facility **does not prove that facility is the sole or dominant emitter**.
+#### 2.3 Central Pollution Control Board (CPCB)
+* **Status**: `AUTH_REQUIRED` / Official CCR CSV
+* **Limitation**: Real-time programmatic queries via Open Government Data (`api.data.gov.in`) require an institutional `DATAGOV_API_KEY`.
+* **Scientific Protocol**: CPCB official National Air Quality Index (NAQI) values are **strictly separated** into `StationAQIRecord` and are never mixed with continuous mass concentrations in `ValidatedObservation`.
 
 ---
 
-## 5. Engineering Intervention Verification Framework
+### 3. Modelled Reanalysis vs. Ground Weather Stations
 
-* **Counterfactual Requirements**: Candidate engineering interventions proposed in the Intervention Lab (e.g., Howrah foundry divided-blast retrofits, river ferry shore electrification) are scientific hypotheses.
-* **De-Weathering Necessity**: Proving emission reduction requires:
-  * Minimum 60-day pre-intervention baseline.
-  * Concurrent observation at an unaffected control station (e.g., Victoria Memorial).
-  * Machine learning de-weathering (e.g., Random Forest or GAM) to isolate weather fluctuations from engineering impact.
+* **Data Classification**: All weather variables (Temperature, Relative Humidity, Wind Speed, Wind Direction, Precipitation, Surface Pressure, Boundary Layer Height) ingested via Open-Meteo are strictly classified as:
+  $$\text{data\_classification} = \text{'MODELLED'}$$
+* **Scientific Disclosure**: Reanalysis data is generated from high-resolution numerical weather prediction models (ECMWF ERA5 / IFS reanalysis), **not physical local weather anemometers or thermometers** mounted at monitoring stations.
+* **Microclimate Limitations**: Localized street-canyon wind eddies, rooftop thermal anomalies, and building wake effects are not resolved by synoptic numerical reanalysis.
 
 ---
 
-## 6. Architecture & Database Design
+### 4. Non-Causality of Meteorological Correlations
 
-* **Zero-Daemon Turnkey SQLite**: Per product requirements to avoid Docker or local database services, the platform uses an embedded, zero-daemon SQLite file (`backend/data/prana.db`).
-* **Geospatial Processing**: Spatial distance and gap analyses are executed in-memory using geodesic Haversine algorithms and Shapely geometries, with schemas structured for seamless 1:1 migration to PostgreSQL/PostGIS in production cloud environments.
+* **Planetary Boundary Layer Dynamics**: During winter (November–February), nocturnal Planetary Boundary Layer Height (PBLH) collapses from $>1,500\text{ m}$ to $<200\text{ m}$ under calm conditions ($<5\text{ km/h}$). This traps pollutants regardless of whether local emissions increased.
+* **Dispersion vs. Emission**: An inverse correlation between wind speed and $\text{PM}_{2.5}$ reflects atmospheric dispersion dilution physics, **not a reduction in source emissions**.
+* **Wind Direction Caveat**: North-North-Westerly (NNW) wind flow aligns with the regional Indo-Gangetic Plain transport corridor. Wind blowing from the direction of a known factory **does not prove that factory is the primary or sole emitter**.
+
+---
+
+### 5. Spatial Coverage Voids & Prohibition of Spurious Interpolation
+
+* **Monitoring Density**: Kolkata and Howrah operate only 9 continuous statutory CAAQM stations across a conurbation of over 14 million residents.
+* **Documented Coverage Voids**:
+  1. **Jalan Industrial Complex & Domjur Foundry Belt**: Cupola iron foundries and heavy casting clusters have zero continuous ambient monitors within an 8.4 km radius.
+  2. **Khidirpur Docks & Kolkata Port Terminal**: Heavy marine bunker combustion and freight idling occur in a 4.2 km monitoring void.
+  3. **Uluberia Industrial & Engineering Cluster**: Located 18.5 km from the nearest statutory monitor, far exceeding urban station representativeness limits.
+  4. **Budge Budge Petroleum Refining & Storage Fringe**: Located 14.8 km from the nearest particulate monitor.
+* **PRANA Scientific Standard**: The platform **strictly refuses to interpolate or extrapolate ward-level pollution heatmaps** across these voids. When distance to the nearest station exceeds 3.5 km, the zone is explicitly classified as a **Coverage Gap with High Uncertainty**.
+
+---
+
+### 6. Engineering Intervention Verification Protocols
+
+* **Hypothesis Status**: Candidate engineering interventions proposed in the Intervention Lab (e.g., Howrah foundry divided-blast retrofits, Hooghly ferry electrification, BT Road arterial dust suppression) are research hypotheses.
+* **Counterfactual Requirements**: Proving emission reduction requires:
+  1. Minimum 60-day pre-intervention verified baseline.
+  2. Concurrent observation at an unaffected control station (e.g., Victoria Memorial).
+  3. Meteorological de-weathering (e.g., machine learning GAM / Random Forest models) to decouple weather fluctuations from engineering impact.
+  4. Never claiming an intervention reduced pollution based solely on historical correlation.
+
+---
+
+### 7. Turnkey Architecture & PostGIS Path
+
+* **Embedded SQLite**: Per requirements avoiding external database daemons or Docker, the platform runs on zero-daemon embedded SQLite (`backend/data/prana.db`).
+* **PostGIS Compatibility**: Geodesic Haversine spatial calculations and SQLAlchemy models are 100% schema-compatible with PostgreSQL + PostGIS for cloud scaling.

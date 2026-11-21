@@ -249,3 +249,44 @@ class RegionalSummaryOut(BaseModel):
     dominant_category: str
     data_integrity: Optional[Dict[str, Any]] = None
     highlights: List[Dict[str, Any]]
+
+# ==============================================================================
+# Milestone 3 Schemas: Ingestion & Environmental Analysis Workspace
+# ==============================================================================
+
+class SavedAnalysisCreate(BaseModel):
+    title: str
+    description: Optional[str] = None
+    author: Optional[str] = "PRANA Environmental Researcher"
+    pollutant: str = "PM2.5"
+    station_ids: List[int]
+    date_range_start: Optional[datetime] = None
+    date_range_end: Optional[datetime] = None
+    met_variables: Optional[List[str]] = []
+    methodology: Optional[str] = None
+    source_references: Optional[str] = None
+    analysis_results: Optional[Dict[str, Any]] = None
+
+class SavedAnalysisOut(SavedAnalysisCreate):
+    id: int
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
+
+class IngestionRefreshRequest(BaseModel):
+    provider_code: Optional[str] = None # None means all providers
+    force_historical: bool = False
+    days_back: int = 7
+
+class IngestionStatusOut(BaseModel):
+    provider_code: str
+    name: str
+    connection_status: str
+    retrieval_method: str
+    last_successful_fetch: Optional[str] = None
+    last_failed_at: Optional[str] = None
+    last_error_message: Optional[str] = None
+    records_processed_total: int = 0
+    latest_observation_timestamp: Optional[str] = None
+
